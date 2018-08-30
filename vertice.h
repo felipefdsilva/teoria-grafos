@@ -14,17 +14,18 @@ using namespace std;
 
 class Vertex {
   public:
-    Vertex ();
-    //~Vertex();
-    void setNeighbour (unsigned);
+    /*construtor*/
+    Vertex (unsigned, unsigned=0, char='0');
 
+    /*metodos de encapsulamento*/
+    void setNeighbour (unsigned);
     vector <unsigned>* getNeighbours();
+    vector <char>* getAdjMatrixLine ();
     unsigned getDegree() const;
 
-    void sortNeighbours ();
-
   private:
-    vector <unsigned> mNeighbours;
+    vector <unsigned> mNeighbours; //vizinhos para lista de adjacências
+    vector <char> mAdjMatrixLine; //Linha da matriz de adjacências
 };
 
 #endif

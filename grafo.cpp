@@ -6,12 +6,16 @@
 */
 
 #include <algorithm>
+#include <queue>
 #include "grafo.h"
 
 using namespace std;
 
-ostream & operator<<(std::ostream & output, Graph &graph){ //lista de adjacencia
-  vector <unsigned> *neighbours;
+//Apenas para teste - Imprime um grafo arranjado como Lista de adjacências
+ostream & operator<<(ostream& output, Graph& graph){
+  vector <unsigned>* neighbours;
+  vector <char>* matrixLine;
+  /*Imprime Lista de Adjacências*/
   for (unsigned i=1; i <= graph.getNumberOfVertices(); ++i){
     output << i << "-->";
     neighbours = graph.getVertex(i)->getNeighbours();
@@ -19,23 +23,26 @@ ostream & operator<<(std::ostream & output, Graph &graph){ //lista de adjacencia
       output << neighbours->at(j) << ", ";
     }
     output << endl;
+  }/*Imprime Matriz*/
+  for (unsigned i=1; i <= graph.getNumberOfVertices(); ++i){
+    output << i << ' ';
+    matrixLine = graph.getVertex(i)->getAdjMatrixLine();
+    for (unsigned j=0; j < graph.getNumberOfVertices(); ++j){
+      output << matrixLine->at(j) << ' ';
+    }
+    cout << endl;
   }
   return output;
-
 }
-
-
-
-
-
-
-
-Graph::Graph (unsigned numberOfVertices): mVertices(numberOfVertices+1){
+/*Construtor da Classe Graph*/
+Graph::Graph (unsigned numberOfVertices): mVertices(numberOfVertices+1, numberOfVertices){
   mNumberOfVertices = numberOfVertices;
 }
+/*Método da classe Graph para acessar um vértice fora do escopo da classe*/
 Vertex* Graph::getVertex(unsigned vertex) {
   return &mVertices.at(vertex);
 }
+/*Método para obter o número de arestas do grafo*/
 unsigned Graph::getNumberOfEdges (){
   unsigned numberOfEdges = 0;
 
@@ -45,41 +52,44 @@ unsigned Graph::getNumberOfEdges (){
   numberOfEdges = numberOfEdges/2;
   return numberOfEdges;
 }
+/*Método para obter o numero de vértices do grafo*/
 unsigned Graph::getNumberOfVertices () const{
   return mNumberOfVertices;
 }
+/*Método para obter o grau mínimo entre o vertices de um grafo*/
 unsigned Graph::getMinDegree (){
-  int minDegree = 10000*10000;
+  unsigned minDegree=(*this).getVertex(1)->getDegree();
 
-  for (unsigned i=1; i <= mNumberOfVertices; i++){
-    if ((*this).getVertex(i)->getDegree()<minDegree){
-    	minDegree=(*this).getVertex(i)->getDegree();};
+   for (unsigned i=2; i <= mNumberOfVertices; i++){
+     if ((*this).getVertex(i)->getDegree()) //evita vertices sem relacionamentos
+      minDegree = min(minDegree, (*this).getVertex(i)->getDegree());
   }
   return minDegree;
 }
+/*Método para obter o grau máximo entre os vértices de um grafo*/
 unsigned Graph::getMaxDegree (){
-  int maxDegree = 0;
+  unsigned maxDegree=(*this).getVertex(1)->getDegree();
 
-  for (unsigned i=1; i <= mNumberOfVertices; i++){
-    if ((*this).getVertex(i)->getDegree()>maxDegree){
-    	maxDegree=(*this).getVertex(i)->getDegree();};
+   for (unsigned i=2; i <= mNumberOfVertices; i++){
+    maxDegree = max(maxDegree, (*this).getVertex(i)->getDegree());
   }
   return maxDegree;
 }
-unsigned Graph::getAvgDegree () {
-  return ((*this).getNumberOfEdges()*2)/mNumberOfVertices;
+/*Método para obter o grau médio do grafo*/
+float Graph::getAvgDegree () {
+  return (*this).getNumberOfEdges()*2.0/mNumberOfVertices*1.0;
 }
+/*Método para obter o grau mediano do grafo*/
 unsigned Graph::getMedianDegree () {
-	vector<unsigned> degrees;
+	vector<unsigned> degrees; //vetor para guardar todos os graus
+
   for (unsigned i=1; i <= mNumberOfVertices; i++){
     degrees.push_back((*this).getVertex(i)->getDegree());
   }
-  sort(degrees.begin(), degrees.end());
+  sort(degrees.begin(), degrees.end()); //Para encontrar o grau mediano, o vector precisa estar ordenado
 
-  if (mNumberOfVertices % 2){ //se for impar
-    return degrees[(mNumberOfVertices/2)+1];
-  }
-  else{ //se for par
-  return (degrees[(mNumberOfVertices/2)]+degrees[(mNumberOfVertices/2)+1])/2;}}
-  
-
+  if (mNumberOfVertices % 2) { //se for impar
+    return degrees[(mNumberOfVertices/2)];
+  } //se for par
+  return (degrees[(mNumberOfVertices/2)-1]+degrees[(mNumberOfVertices/2)])/2;
+}

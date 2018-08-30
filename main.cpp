@@ -16,47 +16,49 @@ using namespace std;
 
 int main (int argc, char *argv[]){
 
-  string line;
-  unsigned vertex1, vertex2;
+  string numberOfVertices;
+  string vertex1, vertex2;
+  unsigned v1, v2;
 
+  /*confere o numero de argumentos passados pela linha de comando*/
   if (argc != 2){
     cout << "Please, provide a text file with the graph description" << endl;
+    cout << "Usage: ./" << argv[0] << "<graph_file.txt>" << endl; //indica como usar o programa
     exit(1);
   }
 
+  /*leitor de arquivo*/
   ifstream file (argv[1], ifstream::in);
-	ofstream myfile;
-	myfile.open ("result.txt");
+	//ofstream myfile;
+	//myfile.open ("result.txt");
 
-  getline(file, line);
+  file>>numberOfVertices; //a primeira linha é sempre o numero de vertices
 
-  Graph graph(stoul(line));
+  Graph graph(stoul(numberOfVertices)); //instanciando a objeto grafo a iniciando-o com o numero de vertices
 
-  cout << "Graph size: " << graph.getNumberOfVertices() << endl;
+  cout << "Number of Vertices: " << graph.getNumberOfVertices() << '\n' << endl; //teste
+
+  /*Montagem do grafo, a partir da leitura do arquivo texto*/
   while (file.good()) {
-    //cout << line << endl;
-    string v1, v2;
-    file>>v1>>v2;
-    vertex1 = stoul(v1);
-    vertex2 = stoul(v2);
-    //cout << "Vertex 1: " << vertex1 << endl;
-    //cout << "Vertex 2: " << vertex2 << endl;
-    graph.getVertex(vertex1)->setNeighbour(vertex2);
-    graph.getVertex(vertex2)->setNeighbour(vertex1);
+    file >> vertex1 >> vertex2;
 
-    getline(file, line);
+    if (!((v1 == stoul (vertex1)) && (v2 == stoul (vertex2)))) { /*evita releitura da ultima linha*/
+      v1 = stoul(vertex1);
+      v2 = stoul (vertex2);
+      graph.getVertex(v1)->setNeighbour(v2);
+      graph.getVertex(v2)->setNeighbour(v1);
+    }
   }
-//   cout << graph;
-
   file.close();
 
-  myfile << "Numero de vértices: " << graph.getNumberOfVertices() << endl;
-  myfile << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
-  myfile << "Grau mínimo: " << graph.getMinDegree() << endl;
-  myfile << "Grau máximo: " << graph.getMaxDegree() << endl;
-  myfile << "Grau médio: " << graph.getAvgDegree() << endl;
-  myfile << "Grau mediano: " << graph.getMedianDegree() << endl;
-  
-  myfile.close();
+  cout << graph; //teste
 
+  cout << "Numero de vertices: " << graph.getNumberOfVertices() << endl;
+  cout << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
+  cout << "Grau minimo: " << graph.getMinDegree() << endl;
+  cout << "Grau maximo: " << graph.getMaxDegree() << endl;
+  cout << "Grau medio: " << graph.getAvgDegree() << endl;
+  cout << "Grau mediano: " << graph.getMedianDegree() << endl;
+
+  /*myfile.close();*/
 }
