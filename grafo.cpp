@@ -10,7 +10,7 @@
 
 using namespace std;
 
-ostream & operator<<(std::ostream & output, Graph &graph){
+ostream & operator<<(std::ostream & output, Graph &graph){ //lista de adjacencia
   vector <unsigned> *neighbours;
   for (unsigned i=1; i <= graph.getNumberOfVertices(); ++i){
     output << i << "-->";
@@ -21,7 +21,15 @@ ostream & operator<<(std::ostream & output, Graph &graph){
     output << endl;
   }
   return output;
+
 }
+
+
+
+
+
+
+
 Graph::Graph (unsigned numberOfVertices): mVertices(numberOfVertices+1){
   mNumberOfVertices = numberOfVertices;
 }
@@ -32,7 +40,7 @@ unsigned Graph::getNumberOfEdges (){
   unsigned numberOfEdges = 0;
 
   for (unsigned i=1; i <= mNumberOfVertices; i++){
-    numberOfEdges =+ (*this).getVertex(i)->getDegree();
+    numberOfEdges += (*this).getVertex(i)->getDegree();
   }
   numberOfEdges = numberOfEdges/2;
   return numberOfEdges;
@@ -41,18 +49,20 @@ unsigned Graph::getNumberOfVertices () const{
   return mNumberOfVertices;
 }
 unsigned Graph::getMinDegree (){
-  unsigned minDegree;
+  int minDegree = 10000*10000;
 
-  for (unsigned i=1; i <= mNumberOfVertices-1; i++){
-    minDegree = min((*this).getVertex(i)->getDegree(), (*this).getVertex(i)->getDegree());
+  for (unsigned i=1; i <= mNumberOfVertices; i++){
+    if ((*this).getVertex(i)->getDegree()<minDegree){
+    	minDegree=(*this).getVertex(i)->getDegree();};
   }
   return minDegree;
 }
 unsigned Graph::getMaxDegree (){
-  unsigned maxDegree;
+  int maxDegree = 0;
 
-  for (unsigned i=1; i <= mNumberOfVertices-1; i++){
-    maxDegree = max((*this).getVertex(i)->getDegree(), (*this).getVertex(i)->getDegree());
+  for (unsigned i=1; i <= mNumberOfVertices; i++){
+    if ((*this).getVertex(i)->getDegree()>maxDegree){
+    	maxDegree=(*this).getVertex(i)->getDegree();};
   }
   return maxDegree;
 }
@@ -60,10 +70,16 @@ unsigned Graph::getAvgDegree () {
   return ((*this).getNumberOfEdges()*2)/mNumberOfVertices;
 }
 unsigned Graph::getMedianDegree () {
-  unsigned size = mNumberOfVertices;
-
-  if (size % 2){
-    return (*this).getVertex(size/2)->getDegree();
+	vector<unsigned> degrees;
+  for (unsigned i=1; i <= mNumberOfVertices; i++){
+    degrees.push_back((*this).getVertex(i)->getDegree());
   }
-  return ((*this).getVertex(size/2 -1)->getDegree() + (*this).getVertex(size/2)->getDegree())/2;
-}
+  sort(degrees.begin(), degrees.end());
+
+  if (mNumberOfVertices % 2){ //se for impar
+    return degrees[(mNumberOfVertices/2)+1];
+  }
+  else{ //se for par
+  return (degrees[(mNumberOfVertices/2)]+degrees[(mNumberOfVertices/2)+1])/2;}}
+  
+
