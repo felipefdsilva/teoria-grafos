@@ -5,7 +5,6 @@
 * Felipe Ferreira e Luis Fernando
 */
 
-#include <algorithm>
 #include <queue>
 #include "grafo.h"
 
@@ -24,14 +23,14 @@ ostream & operator<<(ostream& output, Graph& graph){
     }
     output << endl;
   }/*Imprime Matriz*/
-  for (unsigned i=1; i <= graph.getNumberOfVertices(); ++i){
+  /*for (unsigned i=1; i <= graph.getNumberOfVertices(); ++i){
     output << i << ' ';
     matrixLine = graph.getVertex(i)->getAdjMatrixLine();
-    for (unsigned j=0; j < graph.getNumberOfVertices(); ++j){
+    for (unsigned j=1; j <= graph.getNumberOfVertices(); ++j){
       output << matrixLine->at(j) << ' ';
     }
     cout << endl;
-  }
+  }*/
   return output;
 }
 /*Construtor da Classe Graph*/
@@ -56,40 +55,58 @@ unsigned Graph::getNumberOfEdges (){
 unsigned Graph::getNumberOfVertices () const{
   return mNumberOfVertices;
 }
-/*Método para obter o grau mínimo entre o vertices de um grafo*/
-unsigned Graph::getMinDegree (){
-  unsigned minDegree=(*this).getVertex(1)->getDegree();
-
-   for (unsigned i=2; i <= mNumberOfVertices; i++){
-     if ((*this).getVertex(i)->getDegree()) //evita vertices sem relacionamentos
-      minDegree = min(minDegree, (*this).getVertex(i)->getDegree());
-  }
-  return minDegree;
+void Graph::computeDensity(){
+  mDensity = 2.0*(*this).getNumberOfEdges()/(mNumberOfVertices*(mNumberOfVertices-1));
 }
-/*Método para obter o grau máximo entre os vértices de um grafo*/
-unsigned Graph::getMaxDegree (){
-  unsigned maxDegree=(*this).getVertex(1)->getDegree();
+void Graph::breadthFirstSearch (unsigned root){
+  queue <unsigned> bdsQueue;
+  unsigned vertex;
+  unsigned level=0;
 
-   for (unsigned i=2; i <= mNumberOfVertices; i++){
-    maxDegree = max(maxDegree, (*this).getVertex(i)->getDegree());
+  (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
+  (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
+  level++;
+  bdsQueue.push(root); //colocando o vertice na pilha
+  (*this).getVertex(root)->setFather(root); //o pai do vertice raiz é ele mesmo, por convenção
+
+  if (mDensity > 0.6){ //caso em que é melhor representar por matriz de adjacencia
+  /*  cout << "MATRIZ!!" << endl;
+    vector <char>* neighbours;
+
+    while (!bdsQueue.empty()){
+      vertex = bdsQueue.front();
+      bdsQueue.pop(); //remove vertex da fila
+      neighbours = (*this).getVertex(vertex)->getAdjMatrixLine();
+      for (unsigned nb=0; nb < neighbours->size(); nb++){
+        if (neighbours->at(nb)){
+          if (!(*this).getVertex(nb)->getMarkingStatus()){
+            (*this).getVertex(nb)->setMarkingStatus(true);
+            (*this).getVertex(nb)->setLevel(level);
+            bdsQueue.push(nb);
+            (*this).getVertex(nb)->setFather(vertex);
+          }
+        }
+      }
+      level++;
+    }*/
   }
-  return maxDegree;
-}
-/*Método para obter o grau médio do grafo*/
-float Graph::getAvgDegree () {
-  return (*this).getNumberOfEdges()*2.0/mNumberOfVertices*1.0;
-}
-/*Método para obter o grau mediano do grafo*/
-unsigned Graph::getMedianDegree () {
-	vector<unsigned> degrees; //vetor para guardar todos os graus
+  else { //caso em que é nelhor representar por lista de adjacencia
+    cout << "LISTA!!" << endl;
+    vector <unsigned>* neighbours;
 
-  for (unsigned i=1; i <= mNumberOfVertices; i++){
-    degrees.push_back((*this).getVertex(i)->getDegree());
+    while (!bdsQueue.empty()){
+      vertex = bdsQueue.front();
+      bdsQueue.pop(); //remove vertex da fila
+      neighbours = (*this).getVertex(vertex)->getNeighbours();
+      for (unsigned nb=0; nb < neighbours->size(); nb++){
+        if (!(*this).getVertex(neighbours->at(nb))->getMarkingStatus()){
+          (*this).getVertex(neighbours->at(nb))->setMarkingStatus(true);
+          (*this).getVertex(neighbours->at(nb))->setLevel(level);
+          bdsQueue.push(neighbours->at(nb));
+          (*this).getVertex(neighbours->at(nb))->setFather(vertex);
+        }
+      }
+      level++;
+    }
   }
-  sort(degrees.begin(), degrees.end()); //Para encontrar o grau mediano, o vector precisa estar ordenado
-
-  if (mNumberOfVertices % 2) { //se for impar
-    return degrees[(mNumberOfVertices/2)];
-  } //se for par
-  return (degrees[(mNumberOfVertices/2)-1]+degrees[(mNumberOfVertices/2)])/2;
 }

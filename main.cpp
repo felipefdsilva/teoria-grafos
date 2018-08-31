@@ -11,6 +11,7 @@
 #include <string>
 #include <fstream>
 #include "grafo.h"
+#include "metricas-grafo.h"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ int main (int argc, char *argv[]){
 
   Graph graph(stoul(numberOfVertices)); //instanciando a objeto grafo a iniciando-o com o numero de vertices
 
-  cout << "Number of Vertices: " << graph.getNumberOfVertices() << '\n' << endl; //teste
+  //cout << "Number of Vertices: " << graph.getNumberOfVertices() << '\n' << endl; //teste
 
   /*Montagem do grafo, a partir da leitura do arquivo texto*/
   while (file.good()) {
@@ -51,14 +52,27 @@ int main (int argc, char *argv[]){
   }
   file.close();
 
-  cout << graph; //teste
+  //cout << graph; //teste
+
+  graph.breadthFirstSearch (1);
+
+  cout << "Shortest path between 1 and 6" << endl;
+  v1 = 6;
+  while (v1 != 1){
+    cout << v1 << ", ";
+    v1 = graph.getVertex(v1)->getFather();
+  }
+  cout << v1 << endl;
+
+
+  GraphMetrics graphMetrics(graph);
 
   cout << "Numero de vertices: " << graph.getNumberOfVertices() << endl;
   cout << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
-  cout << "Grau minimo: " << graph.getMinDegree() << endl;
-  cout << "Grau maximo: " << graph.getMaxDegree() << endl;
-  cout << "Grau medio: " << graph.getAvgDegree() << endl;
-  cout << "Grau mediano: " << graph.getMedianDegree() << endl;
+  cout << "Grau minimo: " << graphMetrics.getMinDegree() << endl;
+  cout << "Grau maximo: " << graphMetrics.getMaxDegree() << endl;
+  cout << "Grau medio: " << graphMetrics.getAvgDegree() << endl;
+  cout << "Grau mediano: " << graphMetrics.getMedianDegree() << endl;
 
   /*myfile.close();*/
 }

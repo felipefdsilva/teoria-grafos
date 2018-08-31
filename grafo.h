@@ -16,21 +16,20 @@ class Graph {
   friend ostream & operator<<(std::ostream &, Graph &);
 
   public:
-    /*Construtor que recebe o numero de vertices*/
+    /*Construtor que recebe o número de vértices*/
     Graph(unsigned);
 
     /*Metodos de encapsulamento*/
     Vertex* getVertex (unsigned); //obter vertice
     unsigned getNumberOfEdges (); //obter numero de arestas
     unsigned getNumberOfVertices () const; //obter numero de vertices
-    unsigned getMinDegree (); //obter grau minimo
-    unsigned getMaxDegree (); // obter grau maximo
-    float getAvgDegree (); //obter grau medio
-    unsigned getMedianDegree (); //obter grau mediano
-
+    void computeDensity();
+    void breadthFirstSearch (unsigned);
+    void depthFirstSearch (unsigned, float);
   private:
     unsigned mNumberOfVertices; //atrituto para evitar usar frequentemente a função size() de vector
     vector <Vertex> mVertices; //vector com os vertices que compoem o grafo
+    float mDensity;
 };
 
 #endif
