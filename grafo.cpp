@@ -6,6 +6,7 @@
 */
 
 #include <queue>
+#include <stack>
 #include "grafo.h"
 
 using namespace std;
@@ -66,7 +67,7 @@ void Graph::breadthFirstSearch (unsigned root){
   (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
   (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
   level++;
-  bdsQueue.push(root); //colocando o vertice na pilha
+  bdsQueue.push(root); //colocando o vertice na fila
   (*this).getVertex(root)->setFather(root); //o pai do vertice raiz é ele mesmo, por convenção
 
   if (mDensity > 0.6){ //caso em que é melhor representar por matriz de adjacencia
@@ -103,6 +104,59 @@ void Graph::breadthFirstSearch (unsigned root){
           (*this).getVertex(neighbours->at(nb))->setMarkingStatus(true);
           (*this).getVertex(neighbours->at(nb))->setLevel(level);
           bdsQueue.push(neighbours->at(nb));
+          (*this).getVertex(neighbours->at(nb))->setFather(vertex);
+        }
+      }
+      level++;
+    }
+  }
+}
+
+void Graph::depthFirstSearch (unsigned root){
+  stack <unsigned> dfsStack;
+  unsigned vertex;
+  unsigned level=0;
+
+  (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
+  (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
+  level++;
+  dfsStack.push(root); //colocando o vertice na pilha
+  (*this).getVertex(root)->setFather(root); //o pai do vertice raiz é ele mesmo, por convenção
+
+  if (mDensity > 0.6){ //caso em que é melhor representar por matriz de adjacencia
+  /*  cout << "MATRIZ!!" << endl;
+    vector <char>* neighbours;
+
+    while (!dfsStack.empty()){
+      vertex = dfsStack.top();
+      dfsStack.pop(); //remove vertex da fila
+      neighbours = (*this).getVertex(vertex)->getAdjMatrixLine();
+      for (unsigned nb=0; nb < neighbours->size(); nb++){
+        if (neighbours->at(nb)){
+          if (!(*this).getVertex(nb)->getMarkingStatus()){
+            (*this).getVertex(nb)->setMarkingStatus(true);
+            (*this).getVertex(nb)->setLevel(level);
+            dfsStack.push(nb);
+            (*this).getVertex(nb)->setFather(vertex);
+          }
+        }
+      }
+      level++;
+    }*/
+  }
+  else { //caso em que é nelhor representar por lista de adjacencia
+    cout << "LISTA!!" << endl;
+    vector <unsigned>* neighbours;
+
+    while (!dfsStack.empty()){
+      vertex = dfsStack.top();
+      dfsStack.pop(); //remove vertex da fila
+      neighbours = (*this).getVertex(vertex)->getNeighbours();
+      for (unsigned nb=0; nb < neighbours->size(); nb++){
+        if (!(*this).getVertex(neighbours->at(nb))->getMarkingStatus()){
+          (*this).getVertex(neighbours->at(nb))->setMarkingStatus(true);
+          (*this).getVertex(neighbours->at(nb))->setLevel(level);
+          dfsStack.push(neighbours->at(nb));
           (*this).getVertex(neighbours->at(nb))->setFather(vertex);
         }
       }

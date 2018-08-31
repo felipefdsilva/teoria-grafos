@@ -53,12 +53,15 @@ int main (int argc, char *argv[]){
   file.close();
 
   //cout << graph; //teste
+  
+  int root = 9;
+  int end = 3;
 
-  graph.breadthFirstSearch (1);
+  graph.depthFirstSearch (root);
 
-  cout << "Shortest path between 1 and 6" << endl;
-  v1 = 6;
-  while (v1 != 1){
+  cout << "Shortest path between " << root << " and " << end << endl;
+  v1 = end;
+  while (v1 != root){
     cout << v1 << ", ";
     v1 = graph.getVertex(v1)->getFather();
   }

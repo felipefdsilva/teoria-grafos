@@ -25,7 +25,7 @@ class Graph {
     unsigned getNumberOfVertices () const; //obter numero de vertices
     void computeDensity();
     void breadthFirstSearch (unsigned);
-    void depthFirstSearch (unsigned, float);
+    void depthFirstSearch (unsigned);
   private:
     unsigned mNumberOfVertices; //atrituto para evitar usar frequentemente a função size() de vector
     vector <Vertex> mVertices; //vector com os vertices que compoem o grafo
