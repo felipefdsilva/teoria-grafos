@@ -43,7 +43,7 @@ int main (int argc, char *argv[]){
   while (file.good()) {
     file >> vertex1 >> vertex2;
 
-    if (!((v1 == stoul (vertex1)) && (v2 == stoul (vertex2)))) { /*evita releitura da ultima linha*/
+    if (!((v1 == stoul (vertex1)) && (v2 == stoul (vertex2))) && stoul(vertex1) <= graph.getNumberOfVertices() && stoul(vertex2) <= graph.getNumberOfVertices()) { /*evita releitura da ultima linha*/
       v1 = stoul(vertex1);
       v2 = stoul (vertex2);
       graph.getVertex(v1)->setNeighbour(v2);
@@ -54,18 +54,29 @@ int main (int argc, char *argv[]){
 
   //cout << graph; //teste
   
-  int root = 9;
-  int end = 3;
+  unsigned V = graph.getNumberOfVertices();
+  
+//   for (unsigned i = 1; i <=5; i++){
+//   	for (unsigned j = 10; j<=50; j+=10 ){
+// 		  int root = i;
+// 		  int end = j;
+// 
+// 		  graph.breadthFirstSearch (root, V);
+// 
+// 		  cout << "Shortest path between " << root << " and " << end << endl;
+// 		  v1 = end;
+// 		  if (graph.getVertex(end)->getMarkingStatus()){
+// 		  while (v1 != root){
+// 			cout << v1 << ", ";
+// 			v1 = graph.getVertex(v1)->getFather();
+// 		  }
+// 		  cout << v1 << endl;}
+// 		  else {cout << "No path between " << root << " and " << end << endl;}
+//   
+//   }
+//   }
 
-  graph.depthFirstSearch (root);
-
-  cout << "Shortest path between " << root << " and " << end << endl;
-  v1 = end;
-  while (v1 != root){
-    cout << v1 << ", ";
-    v1 = graph.getVertex(v1)->getFather();
-  }
-  cout << v1 << endl;
+	graph.connectedComponents(V);
 
 
   GraphMetrics graphMetrics(graph);

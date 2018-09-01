@@ -35,9 +35,11 @@ void Vertex::setLevel (unsigned level){
 void Vertex::setMarkingStatus (bool markingStatus){
   mMarkingStatus = markingStatus;
 }
+
 /*metodo para acessar os vizinhos de um vertice*/
 vector <unsigned>* Vertex::getNeighbours (){
-  sort(&mNeighbours.at(0), &mNeighbours.at(mNeighbours.size()-1)); //ordena por otimização
+if (mNeighbours.size()>0){
+  sort(&mNeighbours.at(0), &mNeighbours.at(mNeighbours.size()-1));} //ordena por otimização
   return &mNeighbours;
 }
 /*metodo para obter a linha correspondente ao vertice na matriz de adjacencia*/
@@ -60,3 +62,4 @@ unsigned Vertex::getLevel (){
 bool Vertex::getMarkingStatus (){
   return mMarkingStatus;
 }
+

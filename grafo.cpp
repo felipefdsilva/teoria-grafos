@@ -59,10 +59,14 @@ unsigned Graph::getNumberOfVertices () const{
 void Graph::computeDensity(){
   mDensity = 2.0*(*this).getNumberOfEdges()/(mNumberOfVertices*(mNumberOfVertices-1));
 }
-void Graph::breadthFirstSearch (unsigned root){
+void Graph::breadthFirstSearch (unsigned root, unsigned V){
   queue <unsigned> bdsQueue;
   unsigned vertex;
   unsigned level=0;
+  
+  	  for (unsigned x=1; x <= V; x++){
+	  (*this).getVertex(x)->setMarkingStatus(false);
+	  }
 
   (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
   (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
@@ -112,10 +116,14 @@ void Graph::breadthFirstSearch (unsigned root){
   }
 }
 
-void Graph::depthFirstSearch (unsigned root){
+void Graph::depthFirstSearch (unsigned root, unsigned V){
   stack <unsigned> dfsStack;
   unsigned vertex;
   unsigned level=0;
+  
+  	  for (unsigned x=1; x <= V; x++){
+	  (*this).getVertex(x)->setMarkingStatus(false);
+	  }
 
   (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
   (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
@@ -165,58 +173,82 @@ void Graph::depthFirstSearch (unsigned root){
   }
 }
 
-// void Graph::connectedComponents (unsigned V){
-//   unsigned root = 1;
-//   queue <unsigned> bdsQueue;
-//   unsigned vertex;
-//   unsigned level=0;
-// 
-//   (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
-//   (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
-//   level++;
-//   bdsQueue.push(root); //colocando o vertice na fila
-//   (*this).getVertex(root)->setFather(root); //o pai do vertice raiz é ele mesmo, por convenção
-// 
-//   if (mDensity > 0.6){ //caso em que é melhor representar por matriz de adjacencia
-//   /*  cout << "MATRIZ!!" << endl;
-//     vector <char>* neighbours;
-// 
-//     while (!bdsQueue.empty()){
-//       vertex = bdsQueue.front();
-//       bdsQueue.pop(); //remove vertex da fila
-//       neighbours = (*this).getVertex(vertex)->getAdjMatrixLine();
-//       for (unsigned nb=0; nb < neighbours->size(); nb++){
-//         if (neighbours->at(nb)){
-//           if (!(*this).getVertex(nb)->getMarkingStatus()){
-//             (*this).getVertex(nb)->setMarkingStatus(true);
-//             (*this).getVertex(nb)->setLevel(level);
-//             bdsQueue.push(nb);
-//             (*this).getVertex(nb)->setFather(vertex);
-//           }
-//         }
-//       }
-//       level++;
-//     }*/
-//   }
-//   else { //caso em que é nelhor representar por lista de adjacencia
-//     cout << "LISTA!!" << endl;
-//     vector <unsigned>* neighbours;
-// 	for (unsigned x=1; x <= V; x++){
-// 	if (!((*this).getVertex(x)->getMarkingStatus()){
-// 		while (!bdsQueue.empty()){
-// 		  vertex = x;
-// 		  bdsQueue.pop(); //remove vertex da fila
-// 		  neighbours = (*this).getVertex(vertex)->getNeighbours();
-// 		  for (unsigned nb=0; nb < neighbours->size(); nb++){
-// 			if (!(*this).getVertex(neighbours->at(nb))->getMarkingStatus()){
-// 			  (*this).getVertex(neighbours->at(nb))->setMarkingStatus(true);
-// 			  bdsQueue.push(neighbours->at(nb));
-// 			  cout << (*this).getVertex(neighbours->at(nb)) << " "
-// 			}
-// 		  }
-// 		}
-// 		}
-// 		cout << "\n"
-// 		}
-// 	  }
-}
+	void Graph::connectedComponents (unsigned V){
+	  unsigned root = 1;
+	  stack <unsigned> dfsStack;
+	  unsigned vertex;
+	  vector <unsigned> componentsize;
+
+	
+	  
+	  for (unsigned x=1; x <= V; x++){
+	  (*this).getVertex(x)->setMarkingStatus(false);
+	  }
+	
+		for (unsigned x=1; x <= V; x++){
+		if (!((*this).getVertex(x)->getMarkingStatus())){
+			cout << "\n" << endl;
+			unsigned numComponent=1;
+			root = x;
+			(*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
+			  dfsStack.push(root); //colocando o vertice na pilha
+			  cout << root << " ";
+			
+			  if (mDensity > 0.6){ //caso em que é melhor representar por matriz de adjacencia
+			  /*  cout << "MATRIZ!!" << endl;
+				vector <char>* neighbours;
+
+				while (!dfsStack.empty()){
+				  vertex = dfsStack.top();
+				  dfsStack.pop(); //remove vertex da fila
+				  neighbours = (*this).getVertex(vertex)->getAdjMatrixLine();
+				  for (unsigned nb=0; nb < neighbours->size(); nb++){
+					if (neighbours->at(nb)){
+					  if (!(*this).getVertex(nb)->getMarkingStatus()){
+						(*this).getVertex(nb)->setMarkingStatus(true);
+						(*this).getVertex(nb)->setLevel(level);
+						dfsStack.push(nb);
+						(*this).getVertex(nb)->setFather(vertex);
+					  }
+					}
+				  }
+				  level++;
+				}*/
+			  }
+			  else { //caso em que é nelhor representar por lista de adjacencia
+				vector <unsigned>* neighbours;
+
+				while (!dfsStack.empty()){
+				  vertex = dfsStack.top();
+				  dfsStack.pop(); //remove vertex da fila
+				  neighbours = (*this).getVertex(vertex)->getNeighbours();
+				  if (!neighbours->empty()){
+					  for (unsigned nb=0; nb < neighbours->size(); nb++){
+						if (!(*this).getVertex(neighbours->at(nb))->getMarkingStatus()){
+						  (*this).getVertex(neighbours->at(nb))->setMarkingStatus(true);
+						  dfsStack.push(neighbours->at(nb));
+// 						  cout << neighbours->at(nb) << " ";
+						  numComponent++;}
+					  
+					}
+				  }
+				}
+				
+				componentsize.push_back(numComponent);
+			  }	
+		}
+		
+		}
+		
+		for (unsigned i=0; i<componentsize.size(); i++){
+		cout << "Tamanho da componente " << i+1 << ": "<< componentsize[i] << endl;
+		}
+		
+		cout << "\n \n" << "Número de componentes conexas: " << componentsize.size() << endl;
+		
+		cout << "Maior componente: " << *max_element(componentsize.begin(), componentsize.end()) << endl;
+		cout << "Menor componente: " << *min_element(componentsize.begin(), componentsize.end()) << endl;
+		
+		
+	}	
+

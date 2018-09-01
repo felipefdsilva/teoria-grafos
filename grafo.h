@@ -24,8 +24,9 @@ class Graph {
     unsigned getNumberOfEdges (); //obter numero de arestas
     unsigned getNumberOfVertices () const; //obter numero de vertices
     void computeDensity();
-    void breadthFirstSearch (unsigned);
-    void depthFirstSearch (unsigned);
+    void breadthFirstSearch (unsigned, unsigned);
+    void depthFirstSearch (unsigned, unsigned);
+    void connectedComponents (unsigned);
   private:
     unsigned mNumberOfVertices; //atrituto para evitar usar frequentemente a função size() de vector
     vector <Vertex> mVertices; //vector com os vertices que compoem o grafo
