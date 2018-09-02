@@ -27,17 +27,25 @@ AdjacencyMatrix::AdjacencyMatrix(unsigned numberOfVertices):
                                 mVertices(numberOfVertices+1),
                                 mMatrix((numberOfVertices+1)*(numberOfVertices)){
 }
+
+AdjacencyMatrix::~AdjacencyMatrix(){
+  cout << "AdjacencyMatrix detroyed!" << endl;
+}
+
 void AdjacencyMatrix::setEntry(unsigned line, unsigned column){
   unsigned entry = line + (column-1)*mNumberOfVertices;
   mMatrix.at(entry)=true;
 }
+
 bool AdjacencyMatrix::getEntry(unsigned line, unsigned column){
   unsigned entry = column + (line-1)*mNumberOfVertices;
   return mMatrix.at(entry);
 }
+
 Vertex* AdjacencyMatrix::getVertex(unsigned vertex){
   return &mVertices.at(vertex);
 }
+
 void AdjacencyMatrix::breadthFirstSearch (unsigned root){
   cout << "Matriz Size: " << mMatrix.size() << endl;
   queue <unsigned> bdsQueue;

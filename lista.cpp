@@ -5,15 +5,33 @@
 * Felipe Ferreira e Luis Fernando
 */
 
+#include <iostream> //remover junto com sobrecarga de '<<'
 #include <queue>
 #include <stack>
 #include "lista.h"
 
 using namespace std;
 
+//Apenas para teste - Imprime um grafo arranjado como Lista de adjacências
+ostream & operator<<(ostream& output, AdjacencyList& graph){
+  vector <unsigned>* neighbours;
+  /*Imprime Lista de Adjacências*/
+  for (unsigned i=1; i <= graph.getNumberOfVertices(); ++i){
+    output << i << "-->";
+    neighbours = graph.getVertex(i)->getNeighbours();
+    for (unsigned j=0; j < (*neighbours).size(); ++j){
+      output << neighbours->at(j) << ", ";
+    }
+    output << endl;
+  }
+  return output;
+}
 /*Construtor da Classe Graph*/
 AdjacencyList::AdjacencyList (unsigned numberOfVertices): mVertices(numberOfVertices+1){
   mNumberOfVertices = numberOfVertices;
+}
+AdjacencyList::~AdjacencyList (){
+  cout << "AdjacencyList detroyed" << endl;
 }
 /*Método da classe Graph para acessar um vértice fora do escopo da classe*/
 AdjacencyListVertex* AdjacencyList::getVertex(unsigned vertex) {
@@ -35,6 +53,7 @@ unsigned AdjacencyList::getNumberOfVertices () const{
 }
 /*Método que implementa a busca em largura*/
 void AdjacencyList::breadthFirstSearch (unsigned root, vector<unsigned>* connectedComponent){
+  //cout << "Called bfs!!" << endl;
   queue <unsigned> bdsQueue;
   unsigned vertex;
   unsigned level=0;
@@ -44,6 +63,7 @@ void AdjacencyList::breadthFirstSearch (unsigned root, vector<unsigned>* connect
   }
 
   (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
+  (*this).getVertex(root)->setComponentStatus(true); //indicando q esse vertice ja foi marcado
   connectedComponent->push_back(root);
   (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
   level++;
@@ -58,7 +78,9 @@ void AdjacencyList::breadthFirstSearch (unsigned root, vector<unsigned>* connect
     neighbours = (*this).getVertex(vertex)->getNeighbours();
     for (unsigned nb=0; nb < neighbours->size(); nb++){
       if (!(*this).getVertex(neighbours->at(nb))->getMarkingStatus()){
+        //cout << "The discovered nb is: " << neighbours->at(nb) << endl;
         (*this).getVertex(neighbours->at(nb))->setMarkingStatus(true);
+        (*this).getVertex(neighbours->at(nb))->setComponentStatus(true);
         connectedComponent->push_back(nb);
         (*this).getVertex(neighbours->at(nb))->setLevel(level);
         bdsQueue.push(neighbours->at(nb));
@@ -66,7 +88,9 @@ void AdjacencyList::breadthFirstSearch (unsigned root, vector<unsigned>* connect
       }
     }
     level++;
+    //cout << "Connected Component increased to: " << connectedComponent->size() << endl;
   }
+  //cout << "connectedComponent->size()" << connectedComponent->size() << endl;
 }
 /*Método que implementa a busca em profundidade*/
 void AdjacencyList::depthFirstSearch (unsigned root){

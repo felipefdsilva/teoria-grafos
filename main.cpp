@@ -17,14 +17,12 @@ using namespace std;
 int main (int argc, char *argv[]){
 
   unsigned numberOfVertices;
-  unsigned vertex1;
-  unsigned vertex2;
-  unsigned root = 1;
-  unsigned end = 5;
+  unsigned vertex1, vertex2;
+  //unsigned root = 1;
+  //unsigned end = 5;
   Edge edge;
   vector<Edge> graphEdges;
-
-  bool useMatrix = false;
+  bool useMatrix = true;
 
   /*confere o numero de argumentos passados pela linha de comando*/
   if (argc != 2){
@@ -35,24 +33,18 @@ int main (int argc, char *argv[]){
 
   /*leitor de arquivo*/
   ifstream file (argv[1], ifstream::in);
-	//ofstream myfile;
-	//myfile.open ("result.txt");
 
-  file>>numberOfVertices; //a primeira linha é sempre o numero de vertices
-
-  cout << "Number of Vertices: " << numberOfVertices << endl;
-
+  file >> numberOfVertices; //primeira linha é sempre o numero de vertices do grafo
   /*Montagem do grafo, a partir da leitura do arquivo texto*/
   while (file.good()) {
     file >> vertex1 >> vertex2;
 
-    if (vertex1 < numberOfVertices && vertex2 < numberOfVertices){
+    if (vertex1 <= numberOfVertices && vertex2 <= numberOfVertices){
       edge.setVertices(vertex1, vertex2);
       graphEdges.push_back(edge);
     }
   }
   graphEdges.pop_back(); //remove a repetição da ultima aresta
-
   file.close();
 
   unsigned size = graphEdges.size();
@@ -68,7 +60,11 @@ int main (int argc, char *argv[]){
     while (!graphEdges.empty()){
       graphEdges.pop_back();
     }
-    graph.depthFirstSearch (root);
+    vector <unsigned> connectedComponents;
+    for (unsigned i=0; i < 1000; i++){
+      graph.breadthFirstSearch (i);
+    }
+    /*
 
     if (graph.getVertex(end)->getMarkingStatus()){
       cout << "Shortest path between " << root << " and " << end << endl;
@@ -85,7 +81,7 @@ int main (int argc, char *argv[]){
     cout << "Numero de vertices: " << graph.getNumberOfVertices() << endl;
     cout << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
     GraphMetrics graphMetrics(&graph);
-    cout << graphMetrics;
+    cout << graphMetrics;*/
   }
   else {
     AdjacencyList graph (numberOfVertices);
@@ -97,10 +93,13 @@ int main (int argc, char *argv[]){
     while (!graphEdges.empty()){
       graphEdges.pop_back();
     }
-    vector <unsigned> connectedComponents;
-    graph.breadthFirstSearch (root, &connectedComponents);
 
-    if (graph.getVertex(end)->getMarkingStatus()){
+    vector <unsigned> connectedComponents;
+    for (unsigned i=0; i<1000; i++){
+      graph.breadthFirstSearch (i, &connectedComponents);
+    }
+
+    /*if (graph.getVertex(end)->getMarkingStatus()){
       cout << "Shortest path between " << root << " and " << end << endl;
       vertex1 = end;
       while (vertex1 != root){
@@ -112,12 +111,12 @@ int main (int argc, char *argv[]){
     else {
       cout << "There is no path between " << root << "and " << end << endl;
     }
-    cout << vertex1 << endl;
     cout << "Numero de vertices: " << graph.getNumberOfVertices() << endl;
     cout << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
 
     GraphMetrics graphMetrics(&graph);
-    cout << graphMetrics;
-    graphMetrics.findGraphConnectedComponents();
+    //cout << graphMetrics;
+    graphMetrics.findGraphConnectedComponents();*/
   }
+  return 0;
 }

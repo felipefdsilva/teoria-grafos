@@ -9,8 +9,7 @@
 #include "vertice-lista.h"
 
 /*Construtor*/
-AdjacencyListVertex::AdjacencyListVertex (){
-}
+AdjacencyListVertex::AdjacencyListVertex (){}
 /*estabele um novo vizinho para o objeto vertice*/
 void AdjacencyListVertex::setNeighbour (unsigned neighbour){
   mNeighbours.push_back(neighbour); //na lista de adjacencia

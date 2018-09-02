@@ -6,6 +6,7 @@
 */
 
 #include <algorithm>
+#include <queue>
 #include "lista.h"
 #include "matriz.h"
 #include "metricas.h"
@@ -59,45 +60,39 @@ unsigned GraphMetrics::getMedianDegree () {
 }
 /*Método para encontrar as componentes conexas de um grafo*/
 void GraphMetrics::findGraphConnectedComponents (){
+  //cout << *mListGraph;
   unsigned root = 1;
-  vector <unsigned> connectedComponents;
-  vector <unsigned> componentSize;
-  unsigned sizeBefore;
-  vector <bool> discoveredVertices (mListGraph->getNumberOfVertices(), false);
+  vector <unsigned> component;
+  unsigned exploredVertices=0;
+  priority_queue <vector <unsigned> > connectedComponents;
+  unsigned dumb=0;
 
-  unsigned stackIndex = 0;
-  unsigned discoveredIndex=0;
-
-  mListGraph->breadthFirstSearch(root, &connectedComponents);
-  componentSize.push_back(connectedComponents.size());
-  sizeBefore = connectedComponents.size();
-
-  while (connectedComponents.size() != mListGraph->getNumberOfVertices()){
-    for(unsigned j=0; j < sizeBefore; j++){
-      discoveredVertices.at(connectedComponents.at(stackIndex))=true;
-      stackIndex++;
-    }
-
-    while (discoveredVertices.at(discoveredIndex++)){
-      if (discoveredIndex == discoveredVertices.size()-1)
-        break;
-    }
-    cout << "The problem is not here!" << endl;
-
-    if (root != discoveredIndex){
-      root = discoveredIndex;
-      mListGraph->breadthFirstSearch(root, &connectedComponents);
-      componentSize.push_back(connectedComponents.size() - sizeBefore);
-      sizeBefore = connectedComponents.size();
-    }
+  for (unsigned v=1; v <= mListGraph->getNumberOfVertices(); v++){
+    mListGraph->getVertex(v)->setComponentStatus(false);
   }
+  unsigned i=1;
+  while (exploredVertices < mListGraph->getNumberOfVertices()){
+    cout << "Numero de vertices explorados" << exploredVertices << endl;
 
-	for (unsigned i=0; i<componentSize.size(); i++){
-    cout << "Tamanho da componente " << i+1 << ": "<< componentSize[i] << endl;
+    if (!mListGraph->getVertex(i)->getComponentStatus()){
+      mListGraph->breadthFirstSearch(i, &component);
+      connectedComponents.push(component);
+      exploredVertices += component.size();
+    }
+    while (!component.empty()){
+      component.pop_back();
+    }
+    i++;
   }
+	while(!connectedComponents.empty()){
 
-	cout << "\n \n" << "Número de componentes conexas: " << componentSize.size() << endl;
-
-	cout << "Maior componente: " << *max_element(componentSize.begin(), componentSize.end()) << endl;
-	cout << "Menor componente: " << *min_element(componentSize.begin(), componentSize.end()) << endl;
+    cout << "Tamanho da componente: " << connectedComponents.top().size() << endl;
+    for (unsigned j=0; j < connectedComponents.top().size(); j++){
+      cout << connectedComponents.top().at(j) << " ";
+      if (j == 20) break;
+    }
+    cout << endl;
+    connectedComponents.pop();
+    cout << endl;
+  }
 }

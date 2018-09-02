@@ -14,8 +14,10 @@
 
 class AdjacencyList {
   public:
+    friend ostream & operator<<(ostream& output, AdjacencyList& graph);
     /*Construtor que recebe o número de vértices*/
     AdjacencyList(unsigned);
+    ~AdjacencyList();
 
     /*Metodos de encapsulamento*/
     AdjacencyListVertex* getVertex (unsigned); //obter vertice

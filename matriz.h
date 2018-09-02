@@ -20,6 +20,7 @@ class AdjacencyMatrix {
     friend ostream & operator<<(ostream& output, AdjacencyMatrix& graph);
 
     AdjacencyMatrix(unsigned);
+    ~AdjacencyMatrix();
     void setEntry(unsigned, unsigned);
     bool getEntry(unsigned, unsigned);
     Vertex *getVertex(unsigned);
