@@ -5,23 +5,11 @@
 * Felipe Ferreira e Luis Fernando
 */
 
-#include <algorithm>
-#include <iostream>
-#include "grafo.h"
+#include "vertice.h"
 
-/*Construtor - na prática recebe apenas o numero de vertices*/
-Vertex::Vertex (unsigned numberOfVertices,
-                unsigned neighboursVectorSize, //possui valor padrão 0
-                char matrixLineInitializer,
-                bool markingStatus): //possui valor padrão '0'
-                mNeighbours(neighboursVectorSize), //inicia o vetor de vizinhos de um vertice com tamanho zero
-                //mAdjMatrixLine(numberOfVertices+1, matrixLineInitializer), //inicia o vetor 'linha da matriz' com tamanho numberOfVertices e zeros
-                mMarkingStatus(markingStatus){
-}
-/*estabele um novo vizinho para o objeto vertice*/
-void Vertex::setNeighbour (unsigned neighbour){
-  mNeighbours.push_back(neighbour); //na lista de adjacencia
-  //mAdjMatrixLine.at(neighbour) = '1'; //na matriz de adjacência
+/*Construtor*/
+Vertex::Vertex (bool markingStatus){
+  mMarkingStatus=markingStatus;
 }
 /*estabele o pai atual do vertice na arvore geradora*/
 void Vertex::setFather (unsigned father){
@@ -35,21 +23,6 @@ void Vertex::setLevel (unsigned level){
 void Vertex::setMarkingStatus (bool markingStatus){
   mMarkingStatus = markingStatus;
 }
-
-/*metodo para acessar os vizinhos de um vertice*/
-vector <unsigned>* Vertex::getNeighbours (){
-if (mNeighbours.size()>0){
-  sort(&mNeighbours.at(0), &mNeighbours.at(mNeighbours.size()-1));} //ordena por otimização
-  return &mNeighbours;
-}
-/*metodo para obter a linha correspondente ao vertice na matriz de adjacencia*/
-//vector <char>* Vertex::getAdjMatrixLine (){
-//  return &mAdjMatrixLine;
-//}
-/*metodo para obter o grau do vertice*/
-unsigned Vertex::getDegree () const{
-  return mNeighbours.size();
-}
 /*método para obter o pai do vertice na arvore geradora*/
 unsigned Vertex::getFather (){
   return mFather;
@@ -62,4 +35,9 @@ unsigned Vertex::getLevel (){
 bool Vertex::getMarkingStatus (){
   return mMarkingStatus;
 }
-
+void Vertex::setDegree(unsigned degree){
+  mDegree = degree;
+}
+unsigned Vertex::getDegree (){
+  return mDegree;
+}

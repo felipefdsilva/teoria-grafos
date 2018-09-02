@@ -8,34 +8,28 @@
 #ifndef VERTICE_H
 #define VERTICE_H "vertice.h"
 
-#include <vector>
-
-using namespace std;
-
 class Vertex {
   public:
     /*construtor*/
-    Vertex (unsigned, unsigned=0, char='0', bool=false);
+    /*recebe o numero de vertices e o status da marcação*/
+    Vertex (bool=false);
 
     /*metodos de encapsulamento*/
-    void setNeighbour (unsigned);
-    void setFather (unsigned);
-    void setLevel (unsigned);
-    void setMarkingStatus (bool); //0 é não marcado e 1 é marcado
+    void setFather (unsigned); //salvar pai na arvore geradora
+    void setLevel (unsigned); //salvar nivel na arvore geradora
+    void setDegree (unsigned);
+    void setMarkingStatus (bool); //'false' é não marcado e 'true' é marcado
 
-    vector <unsigned>* getNeighbours();
-    //vector <char>* getAdjMatrixLine ();
-    unsigned getDegree() const;
-    unsigned getFather ();
-    unsigned getLevel ();
-    bool getMarkingStatus ();
+    unsigned getDegree(); //grau do vertice
+    unsigned getFather (); //obter pai da arvore geradora
+    unsigned getLevel (); //obter nivel na arvore geradora
+    bool getMarkingStatus (); //obter status da marcação
 
-  private:
+  protected:
     unsigned mFather; //vertice pai (que descobriu este vertice)
     unsigned mLevel; //nivel na arvore geradora
-    bool mMarkingStatus; //marcação (inicialmente é "não marcado")
-    vector <unsigned> mNeighbours; //vizinhos para lista de adjacências
-    //vector <char> mAdjMatrixLine; //Linha da matriz de adjacências
+    bool mMarkingStatus; //marcação (iniciado como "não marcado")
+    unsigned mDegree;
 };
 
 #endif

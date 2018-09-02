@@ -5,32 +5,27 @@
 * Felipe Ferreira e Luis Fernando
 */
 
-#ifndef GRAFO_H
-#define GRAFO_H "grafo.h"
+#ifndef LISTA
+#define LISTA "lista.h"
 
 #include <iostream>
-#include "vertice.h"
+#include <stack>
+#include "vertice-lista.h"
 
-class Graph {
-  /*Classe amiga usada apenas para teste*/
-  friend ostream & operator<<(std::ostream &, Graph &);
-
+class AdjacencyList {
   public:
     /*Construtor que recebe o número de vértices*/
-    Graph(unsigned);
+    AdjacencyList(unsigned);
 
     /*Metodos de encapsulamento*/
-    Vertex* getVertex (unsigned); //obter vertice
+    AdjacencyListVertex* getVertex (unsigned); //obter vertice
     unsigned getNumberOfEdges (); //obter numero de arestas
     unsigned getNumberOfVertices () const; //obter numero de vertices
-    void computeDensity();
-    void breadthFirstSearch (unsigned, unsigned);
-    void depthFirstSearch (unsigned, unsigned);
-    void connectedComponents (unsigned);
+    void breadthFirstSearch (unsigned, vector <unsigned> *);
+    void depthFirstSearch (unsigned);
   private:
     unsigned mNumberOfVertices; //atrituto para evitar usar frequentemente a função size() de vector
-    vector <Vertex> mVertices; //vector com os vertices que compoem o grafo
-    float mDensity;
+    vector <AdjacencyListVertex> mVertices; //vector com os vertices que compoem o grafo
 };
 
 #endif
