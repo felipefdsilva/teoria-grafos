@@ -110,8 +110,7 @@ int main (int argc, char *argv[]){
     else {
       cout << "There is no path between " << root << "and " << end << endl;
     }*/
-    cout << "Numero de vertices: " << graph.getNumberOfVertices() << endl;
-    cout << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
+
 	
 	
 	unsigned V = graph.getNumberOfVertices();
@@ -140,6 +139,8 @@ int main (int argc, char *argv[]){
     streambuf *coutbuf = std::cout.rdbuf(); 
     cout.rdbuf(out.rdbuf());
     
+    cout << "Numero de vertices: " << graph.getNumberOfVertices() << endl;
+    cout << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
     cout << graphMetrics;
     
     cout.rdbuf(coutbuf);
