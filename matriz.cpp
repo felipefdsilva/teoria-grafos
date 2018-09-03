@@ -126,4 +126,4 @@ unsigned AdjacencyMatrix::getNumberOfEdges (){
 /*metodo para obter o numero de vertices do grafo*/
 unsigned AdjacencyMatrix::getNumberOfVertices () const{
   return mNumberOfVertices;
-}
+} 
