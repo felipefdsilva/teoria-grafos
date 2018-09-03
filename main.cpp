@@ -65,7 +65,6 @@ int main (int argc, char *argv[]){
       graph.breadthFirstSearch (i);
     }
     /*
-
     if (graph.getVertex(end)->getMarkingStatus()){
       cout << "Shortest path between " << root << " and " << end << endl;
       vertex1 = end;
@@ -113,10 +112,37 @@ int main (int argc, char *argv[]){
     }*/
     cout << "Numero de vertices: " << graph.getNumberOfVertices() << endl;
     cout << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
-
+	
+	
+	unsigned V = graph.getNumberOfVertices();
+	
     GraphMetrics graphMetrics(&graph);
+    
+    time_t time0;   // create timers.
+    time_t time1;
+
+    time(&time0);
+    
+	graph.connectedComponents(V);
+	
+	if(graph.connectedComponents(V)==1){
+	cout << "Diâmetro "<< graph.getDiameter(V)<< "\n" << endl;}
+	else{
+	cout << "Diâmetro infinito" << "\n" <<endl;
+	}
+	time(&time1);
+	
+	double seconds = time1 - time0;
+
+    cout << "seconds since start: " << seconds <<'\n';
+    
+    ofstream out("metricas.txt"); // redireciona o cout para um arquivo
+    streambuf *coutbuf = std::cout.rdbuf(); 
+    cout.rdbuf(out.rdbuf());
+    
     cout << graphMetrics;
-    //graphMetrics.findGraphConnectedComponents();
+    
+    cout.rdbuf(coutbuf);
   }
   return 0;
 }

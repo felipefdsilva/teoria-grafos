@@ -25,6 +25,9 @@ class AdjacencyList {
     unsigned getNumberOfVertices () const; //obter numero de vertices
     void breadthFirstSearch (unsigned, vector <unsigned> *);
     void depthFirstSearch (unsigned);
+    unsigned connectedComponents (unsigned);
+    unsigned getHeight (unsigned,unsigned);
+    unsigned getDiameter (unsigned);
   private:
     unsigned mNumberOfVertices; //atrituto para evitar usar frequentemente a função size() de vector
     vector <AdjacencyListVertex> mVertices; //vector com os vertices que compoem o grafo
