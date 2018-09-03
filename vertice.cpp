@@ -49,4 +49,4 @@ bool Vertex::getMarkingStatus (){
 /*método para obter a informação se o vertice já foi marcado uma vez e pertece a uma componente conexa*/
 bool Vertex::getComponentStatus(){
   return mComponentStatus;
-}
+} 
