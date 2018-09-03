@@ -35,4 +35,4 @@ class Vertex {
     unsigned mDegree;
 };
 
-#endif
+#endif 
