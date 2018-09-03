@@ -35,4 +35,4 @@ class AdjacencyMatrix {
     vector<bool> mMatrix;
 };
 
-#endif
+#endif 
