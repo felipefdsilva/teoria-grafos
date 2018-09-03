@@ -226,17 +226,21 @@ void AdjacencyList::depthFirstSearch (unsigned root){
 	    cout.rdbuf(coutbuf); // volta o cout para o output em linha de comando
 	    return componentsize.size();
 	}
+	
+	unsigned vertice=0;
 unsigned AdjacencyList::getHeight (unsigned root, unsigned V){
   queue <unsigned> bdsQueue;
   unsigned vertex;
-  unsigned level=1;
+  unsigned level=0;
   
   	  for (unsigned x=1; x <= V; x++){
 	  (*this).getVertex(x)->setMarkingStatus(false);
 	  }
+	
 
   (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
   (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
+  level++;
   bdsQueue.push(root); //colocando o vertice na fila
   (*this).getVertex(root)->setFather(root); //o pai do vertice raiz é ele mesmo, por convenção
 
@@ -275,25 +279,41 @@ unsigned AdjacencyList::getHeight (unsigned root, unsigned V){
           (*this).getVertex(neighbours->at(nb))->setLevel(level);
           bdsQueue.push(neighbours->at(nb));
           (*this).getVertex(neighbours->at(nb))->setFather(vertex);
+          vertice = neighbours->at(nb);
         // }
       }
-      level++;
+      
     }
+	level++;
+  } 
+//   cout << vertice << endl;   
+//   cout << (*this).getVertex(vertice)->getLevel() << endl;
 
-  }    return level;
+      unsigned height = 0;
+      unsigned vertex1 = vertice;
+      while (vertex1 != root){
+        vertex1 = (*this).getVertex(vertex1)->getFather();
+        height++;
+      }
+      
+  return height;
 }
 
 	
 unsigned AdjacencyList::getDiameter (unsigned V){
-	unsigned x = 1;
-   for (int i=0; i<=V;i++){
-   		if (getHeight(i,V)>x){
-   			x=getHeight(i,V);
-   		
-   }
+	unsigned x = 1; // 1a opção: fazer uma bfs a partir de um vertice qq (1, nesse caso) e depois outra bfs a partir 
+   x=getHeight(1,V);// do último vertice marcado na primeira bfs - tirar a distancia da segunda bfs = diametro
+   unsigned diameter = getHeight(vertice,V);
    
-}
-return x;
+
+return diameter;
+
+// 	unsigned x = 1; //2a opcao: rodar uma bfs pra cada vertice do grafo, usando cada um como raiz de cada vez
+//    for (int i=0; i<=V;i++){
+//    		if (getHeight(i,V)>x){
+//    			x=getHeight(i,V);}
+//    			}
+//    	return x;
 }
 
 

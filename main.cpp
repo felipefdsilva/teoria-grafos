@@ -122,6 +122,7 @@ int main (int argc, char *argv[]){
 
     time(&time0);
     
+    
 	graph.connectedComponents(V);
 	
 	if(graph.connectedComponents(V)==1){
@@ -131,7 +132,7 @@ int main (int argc, char *argv[]){
 	}
 	time(&time1);
 	
-	double seconds = time1 - time0;
+	double seconds = (time1 - time0);
 
     cout << "seconds since start: " << seconds <<'\n';
     
