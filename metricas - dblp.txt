@@ -1,0 +1,6 @@
+Numero de vertices: 1397510
+Numero de arestas: 5450815
+Grau minimo: 0
+Grau maximo: 1638
+Grau medio: 7.80075
+Grau mediano: 4
