@@ -23,4 +23,4 @@ vector <unsigned>* AdjacencyListVertex::getNeighbours (){
 /*metodo para obter o grau do vertice*/
 unsigned AdjacencyListVertex::getDegree () const{
   return mNeighbours.size();
-}
+} 
