@@ -2,13 +2,10 @@
 Repositório do trabalho da disciplina Teoria dos Grafos 2018.2
 
 ### Como compilar o programa
-    g++ -c vertice.cpp
-    g++ -c grafo.cpp
-    g++ -c metricas-grafo.cpp
-    g++ -std=c++11 -c main.cpp
+    g++ -c -std=c++11 lista.cpp matriz.cpp main.cpp metricas.cpp vertice.cpp vertice-lista.cpp aresta.cpp
 
 ### Como link-editar
-    g++ -o grafo metricas-grafo.o grafo.o vertice.o
+    g++ -o grafo lista.o matriz.o main.o metricas.o vertice.o vertice-lista.o aresta.o
 
 ### Executar
     Linux(Mac): $./grafo <arquivo-texto-com-grafo>
