@@ -22,7 +22,7 @@ int main (int argc, char *argv[]){
   //unsigned end = 5;
   Edge edge;
   vector<Edge> graphEdges;
-  bool useMatrix = true;
+  bool useMatrix = false;
 
   /*confere o numero de argumentos passados pela linha de comando*/
   if (argc != 2){
@@ -95,9 +95,9 @@ int main (int argc, char *argv[]){
     }
 
     vector <unsigned> connectedComponents;
-    for (unsigned i=0; i<1000; i++){
-      graph.breadthFirstSearch (i, &connectedComponents);
-    }
+    //for (unsigned i=0; i<1000; i++){
+    //  graph.breadthFirstSearch (i, &connectedComponents);
+    //}
 
     /*if (graph.getVertex(end)->getMarkingStatus()){
       cout << "Shortest path between " << root << " and " << end << endl;
@@ -110,13 +110,13 @@ int main (int argc, char *argv[]){
     }
     else {
       cout << "There is no path between " << root << "and " << end << endl;
-    }
+    }*/
     cout << "Numero de vertices: " << graph.getNumberOfVertices() << endl;
     cout << "Numero de arestas: " << graph.getNumberOfEdges() << endl;
 
     GraphMetrics graphMetrics(&graph);
-    //cout << graphMetrics;
-    graphMetrics.findGraphConnectedComponents();*/
+    cout << graphMetrics;
+    //graphMetrics.findGraphConnectedComponents();
   }
   return 0;
 }
