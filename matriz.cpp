@@ -5,125 +5,54 @@
 * Felipe Ferreira e Luis Fernando
 */
 
-#include <iostream>
-#include <queue>
-#include <stack>
 #include "matriz.h"
-#include "vertice.h"
 
-ostream & operator<<(ostream& output, AdjacencyMatrix& graph){
-
-  for (unsigned i=1; i <= graph.getNumberOfVertices(); i++){
-    for (unsigned j=1; j <= graph.getNumberOfVertices(); j++){
-      output << graph.getEntry(i,j) << " ";
-    }
-    output << endl;;
-  }
-  return output;
-}
-
+/*Construtor*/
 AdjacencyMatrix::AdjacencyMatrix(unsigned numberOfVertices):
-                                mNumberOfVertices(numberOfVertices),
-                                mVertices(numberOfVertices+1),
+                                Graph(numberOfVertices),
                                 mMatrix((numberOfVertices+1)*(numberOfVertices)){
 }
-
+/*Destrutor*/
 AdjacencyMatrix::~AdjacencyMatrix(){
   cout << "AdjacencyMatrix detroyed!" << endl;
 }
+/*Configura entrada na matriz de adjacencias*/
+void AdjacencyMatrix::setNeighbours(unsigned vertex1, unsigned vertex2){
+  unsigned line = min (vertex1, vertex2);
+  unsigned column = max (vertex1, vertex2);
+  unsigned numberOfVertices = this->getNumberOfVertices();
 
-void AdjacencyMatrix::setEntry(unsigned line, unsigned column){
-  unsigned entry = line + (column-1)*mNumberOfVertices;
+  unsigned entry = line + (column-1)*numberOfVertices;
   mMatrix.at(entry)=true;
 }
+/*Procura os vizinhos do vértice na matriz de adjacencias*/
+void AdjacencyMatrix::getNeighbours(unsigned vertex, vector<unsigned> *neighbours){
+  unsigned numberOfVertices = this->getNumberOfVertices();
+  unsigned entry;
 
-bool AdjacencyMatrix::getEntry(unsigned line, unsigned column){
-  unsigned entry = column + (line-1)*mNumberOfVertices;
-  return mMatrix.at(entry);
+  while (!neighbours->empty()){
+    neighbours->pop_back();
+  }
+  for (unsigned neighbour=1; neighbour <= numberOfVertices; neighbour++){
+    if (neighbour < vertex){
+      entry = neighbour + (vertex-1)*numberOfVertices;
+    } else {
+      entry = vertex + (neighbour-1)*numberOfVertices;
+    }
+    if (mMatrix.at(entry)){
+      neighbours->push_back(neighbour);
+    }
+  }
 }
-
-Vertex* AdjacencyMatrix::getVertex(unsigned vertex){
-  return &mVertices.at(vertex);
+/*Método para imprimir a matriz de adjacencias*/
+void AdjacencyMatrix::print (){
+  Graph::print();
 }
-
+/*Método que executa a busca em largura*/
 void AdjacencyMatrix::breadthFirstSearch (unsigned root){
-  cout << "Matriz Size: " << mMatrix.size() << endl;
-  queue <unsigned> bdsQueue;
-  unsigned vertex;
-  unsigned level=0;
-
-  for (unsigned v=1; v <= mNumberOfVertices; v++){
-    (*this).getVertex(v)->setMarkingStatus(false);
-  }
-
-  (*this).getVertex(root)->setMarkingStatus(true); //marcando o vertice como descoberto
-  (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
-  level++;
-  bdsQueue.push(root); //colocando o vertice na fila
-  (*this).getVertex(root)->setFather(root); //o pai do vertice raiz é ele mesmo, por convenção
-
-  while (!bdsQueue.empty()){
-    vertex = bdsQueue.front();
-    bdsQueue.pop(); //remove vertex da fila
-
-    for (unsigned nb=1; nb <= mNumberOfVertices; nb++){
-      if (mMatrix.at(nb+(vertex-1)*mNumberOfVertices)){
-        if (!(*this).getVertex(nb)->getMarkingStatus()){
-          (*this).getVertex(nb)->setMarkingStatus(true);
-          (*this).getVertex(nb)->setLevel(level);
-          bdsQueue.push(nb);
-          (*this).getVertex(nb)->setFather(vertex);
-        }
-      }
-    }
-    level++;
-  }
+  Graph::breadthFirstSearch(root);
 }
+/*Metodo que executa a busca em profundidade*/
 void AdjacencyMatrix::depthFirstSearch (unsigned root){
-  stack <unsigned> dfsStack;
-  unsigned vertex, father;
-  unsigned level=0;
-
-  for (unsigned v=1; v <= mNumberOfVertices; v++){
-    (*this).getVertex(v)->setMarkingStatus(false);
-  }
-  (*this).getVertex(root)->setLevel(level); //nivel da raiz é 0
-  dfsStack.push(root); //colocando o vertice na pilha
-  (*this).getVertex(root)->setFather(root); //o pai do vertice raiz é ele mesmo, por convenção
-  father = root;
-
-  while (!dfsStack.empty()){
-    vertex = dfsStack.top();
-    dfsStack.pop(); //remove vertex da fila
-
-    if (!((*this).getVertex(vertex)->getMarkingStatus())){
-      (*this).getVertex(vertex)->setFather(father);
-      (*this).getVertex(vertex)->setLevel((*this).getVertex(father)->getLevel()+1); //nivel da raiz é 0
-      (*this).getVertex(vertex)->setMarkingStatus(true); //marcando o vertice como explorado
-
-      for (unsigned nb=1; nb <= mNumberOfVertices; nb++){
-        if (mMatrix.at(nb+(vertex-1)*mNumberOfVertices))
-          dfsStack.push((nb));
-        }
-      father = vertex;
-    }
-  }
+  Graph::depthFirstSearch(root);
 }
-/*Método para obter o número de arestas do grafo*/
-unsigned AdjacencyMatrix::getNumberOfEdges (){
-  unsigned numberOfEdges, degree = 0;
-
-  for (unsigned i=1; i <= mNumberOfVertices; i++){
-    for (unsigned j=1; j <= mNumberOfVertices; j++){
-      degree += mMatrix.at(j+(i-1)*mNumberOfVertices);
-    }
-    (*this).getVertex(i)->setDegree(degree);
-    numberOfEdges += degree;
-  }
-  numberOfEdges = numberOfEdges/2;
-  return numberOfEdges;
-}
-/*metodo para obter o numero de vertices do grafo*/
-unsigned AdjacencyMatrix::getNumberOfVertices () const{
-  return mNumberOfVertices;
-} 
