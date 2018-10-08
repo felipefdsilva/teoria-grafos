@@ -1,22 +1,61 @@
 /*
 * Universidade Federal do Rio de Janeiro
 * Teoria dos Grafos 2018.2
-* Trabalho da Disciplina - Parte 1
-* Felipe Ferreira e Luis Fernando
+* Trabalho da Disciplina - Parte 2 (Grafos com pesos)
+* Autores: Felipe Ferreira e Luis Fernando
+* Implementação da classe lista de adjacências
 */
 
-//#include <queue>
-//#include <algorithm>
-//#include <stack>
-//#include <fstream>
-#include <iostream>
-#include "lista.h"
+#include <fstream>
+#include <string>
+#include <stdexcept>
+#include "headers/split.h"
+#include "headers/lista.h"
 
 using namespace std;
 
 /*Construtor da Classe AdjacencyList*/
-AdjacencyList::AdjacencyList (unsigned numberOfVertices): Graph(numberOfVertices),
-                                                          mAdjList(numberOfVertices+1){
+AdjacencyList::AdjacencyList (char *graphFile) {
+  unsigned numberOfVertices;
+  unsigned vertex1, vertex2;
+  float weight;
+  unsigned begin;
+  unsigned edgeCount = 0;
+  string line;
+  vector <string> verticesAndWeight (0);
+
+  ifstream file (graphFile, ifstream::in); //abre arquivo para leitura
+
+  /*Montagem do grafo, a partir da leitura do arquivo texto*/
+  file >> numberOfVertices; //primeira linha é sempre o número de vértices do grafo
+  Graph::setNumberOfVertices (numberOfVertices); //salva o numero de vertices no objeto da classe grafo
+  mAdjList.resize(numberOfVertices+1);
+
+  getline (file, line, '\n');
+
+  while (file.good()) {
+    getline(file, line, '\n');
+    splitString (line, " ", verticesAndWeight, begin);
+    if (begin != verticesAndWeight.size()) { //evita ler o "\n" no final do arquivo
+      vertex1 = stoi (verticesAndWeight.at(begin), nullptr, 10); //converte vertice de string para inteiro
+      vertex2 = stoi (verticesAndWeight.at(begin+1), nullptr, 10); //converte vertice de string para inteiro
+      if (vertex1 <= numberOfVertices && vertex2 <= numberOfVertices){ //evita leitura de vertices invalidos
+        setNeighbours(vertex1, vertex2); //adiciona info na lista de adjacências
+        edgeCount++; //incrementa numero de arestas
+        if ((verticesAndWeight.size()-begin) == 3){ //se existe peso
+          weight = stof(verticesAndWeight.at(begin+2), nullptr, 10);
+          if (weight < 0){
+            cout << "Os pesos das arestas devem ser todos positivos" << endl;
+            exit (1);
+          }
+          Graph::setWeight (vertex1, vertex2, weight)
+        }
+      }
+    }
+  }
+  /*Fim da montagem do grafo*/
+  file.close(); //fim da leitura do arquivo
+  setNumberOfEdges(edgeCount); //salva o numero de arestas no objeto da classe grafo
 }
 /*Destrutor*/
 AdjacencyList::~AdjacencyList (){

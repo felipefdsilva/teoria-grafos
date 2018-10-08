@@ -1,8 +1,9 @@
 /*
 * Universidade Federal do Rio de Janeiro
 * Teoria dos Grafos 2018.2
-* Trabalho da Disciplina - Parte 1
-* Felipe Ferreira e Luis Fernando
+* Trabalho da Disciplina - Parte 2 (Grafos com pesos)
+* Autores: Felipe Ferreira e Luis Fernando
+* Declaração da classe lista (de adjacências)
 */
 
 #ifndef LISTA
@@ -17,8 +18,8 @@ using namespace std;
 class AdjacencyList: public Graph {
   public:
 
-    AdjacencyList(unsigned);//Contrutor
-    ~AdjacencyList();//Destrutor
+    AdjacencyList(char *); //Contrutor
+    ~AdjacencyList(); //Destrutor
     /*Metodos de encapsulamento*/
     virtual void setNeighbours (unsigned, unsigned);
     virtual void getNeighbours (unsigned, vector<unsigned> *);

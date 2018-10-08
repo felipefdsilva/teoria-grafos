@@ -1,8 +1,9 @@
 /*
 * Universidade Federal do Rio de Janeiro
 * Teoria dos Grafos 2018.2
-* Trabalho da Disciplina - Parte 1
-* Felipe Ferreira e Luis Fernando
+* Trabalho da Disciplina - Parte 2 (Grafos com pesos)
+* Autores: Felipe Ferreira e Luis Fernando
+* Declaração da classe matriz de adjacências
 */
 
 #ifndef MATRIZ
@@ -15,14 +16,14 @@ using namespace std;
 
 class AdjacencyMatrix: public Graph {
   public:
-    AdjacencyMatrix(unsigned);//Contrutor
+    AdjacencyMatrix(char *);//Contrutor
     ~AdjacencyMatrix();//Destrutor
     /*Métodos de Encapsulamento*/
     virtual void setNeighbours (unsigned, unsigned);
     virtual void getNeighbours (unsigned, vector<unsigned> *);
     /*Métodos de busca no grafo*/
     virtual void breadthFirstSearch (unsigned);//busca em largura
-    virtual void depthFirstSearch (unsigned);//busca em profundidade
+    //virtual void depthFirstSearch (unsigned);//busca em profundidade
     /*Método para testes*/
     virtual void print ();//imprime o grafo
 

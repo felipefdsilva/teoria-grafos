@@ -1,30 +1,27 @@
 /*
 * Universidade Federal do Rio de Janeiro
 * Teoria dos Grafos 2018.2
-* Trabalho da Disciplina - Parte 1
-* Felipe Ferreira e Luis Fernando
+* Trabalho da Disciplina - Parte 2 (Grafos com pesos)
+* Autores: Felipe Ferreira e Luis Fernando
+* Declaração da classe vertice
 */
 
 #ifndef VERTICE_H
-#define VERTICE_H "vertice.h"
+#define VERTICE_H	"vertice.h"
 
 class Vertex {
-  public:
-    /*construtor*/
-    Vertex (unsigned, unsigned, unsigned);//recebe o indice, o pai e o nivel do vertice
-    Vertex (const Vertex &); //construtor de cópia
-    /*metodos de encapsulamento*/
-    void setIndex(unsigned); //configura o indice do vertice
-    void setFather (unsigned); //salvar pai na arvore geradora
-    void setLevel (unsigned); //salvar nivel na arvore geradora
-    unsigned getIndex(); //obtém o indice do vertice
-    unsigned getFather (); //obter pai da arvore geradora
-    unsigned getLevel (); //obter nivel na arvore geradora
-
-  protected:
-    unsigned mIndex; //indice do vertice
-    unsigned mFather; //vertice pai (que descobriu este vertice)
-    unsigned mLevel; //nivel na arvore geradora
+	friend ostream & operator <<(ostream & s, const Vertex & z);
+	public:
+		Vertex (int, float);
+		unsigned getIndex ();
+		void setDistance (float);
+		float getDistance ();
+		bool operator<(const Vertex &x);
+		bool operator>(const Vertex &x);
+		void operator=(const Vertex &x);
+	private:
+		int mIndex;
+		float mDistance;
 };
 
 #endif
