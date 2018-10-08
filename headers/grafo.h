@@ -28,12 +28,14 @@ class Graph {
     void setWeight(unsigned, unsigned, float); //insere o peso de uma aresta no vetor de pesos
     float getWeight (unsigned, unsigned); //returna o peso de uma aresta do grafo
     float averageDistance(); //calcula a distancia média do grafo
-    void eccentricity(unsigned); //calcula a Excentricidade de um vertice
     /*Métodos de busca no grafo*/
     virtual void breadthFirstSearch (unsigned); //realiza a busca em largura
     //virtual void depthFirstSearch (unsigned); //realiza a busca em profundidade
-    void dijkstra (unsigned); //determina caminhos mínimos em grafos com pesos
+    float dijkstra (unsigned); //determina caminhos mínimos em grafos com pesos
     void prim(unsigned); //determina uma mst de um grafo com pesos
+    void minPathBetweenResearchers(const char*, const char*); //determina o menor caminho entre pesquisadores
+    void printNeighbours(const char *); //imprime os vizinhos de um pesquisador no grafo
+    void greatestDegrees(); //obtem os maiores três graus de um grafo
     /*Método para testes*/
     virtual void print ();//imprime o grafo
   private:
