@@ -10,8 +10,8 @@
 #include <queue> //para a fila da bfs
 #include <string> //para o tipo string
 #include <algorithm> //para min, max
-#include <fstream>
-#include <sstream>
+#include <fstream> //para leitura de arquivo
+#include <sstream> //para manipular strings
 #include "grafo.h" //declaração da classe grafo
 #include "my-heap.h" //para o objeto MyHeap
 
@@ -23,6 +23,7 @@ Graph::Graph (){
 /*Destrutor*/
 Graph::~Graph(){
 }
+/*Método que configura o numero de vertices do grafo*/
 void Graph::setNumberOfVertices (unsigned numberOfVertices){
   mNumberOfVertices = numberOfVertices;
 }
@@ -51,11 +52,11 @@ unsigned Graph::getNumberOfEdges () const{
   return mNumberOfEdges;
 }
 /*Método que configura a flag de grafo com peso*/
-void setWeightedGraphStatus (bool status){
+void Graph::setWeightedGraphStatus (bool status){
   mWeightedGraph = status;
 }
 /*metodo que retorna o valor da flag de grafo com peso*/
-bool weighted (){
+bool Graph::weighted (){
   return mWeightedGraph;
 }
 /*Método que configura o peso de uma aresta*/
@@ -131,10 +132,7 @@ float Graph::dijkstra(unsigned rootVertex){
   mMinDist.at(rootVertex) = 0; //distancia mínima para o vertice raiz é conhecida e é zero
   mParent.at(rootVertex) = rootVertex; //o pai do vertice raiz é ele mesmo
 
-  Vertex vertexZero (0, mMinDist[0]); //apenas para ajustar o tamanho do heap
-  heap.push(vertexZero); //posição 0 do heap é um vertice que não deve ser usado (não existe no grafo)
-
-  for(unsigned i = 1; i <= mNumberOfVertices; i++){ //inicialização do heap
+  for(unsigned i = 1; i < mNumberOfVertices; i++){ //inicialização do heap
     vertex.setIndex(i);
     vertex.setDistance(mMinDist[i]);
     heap.push(vertex);
@@ -213,6 +211,9 @@ void Graph::prim(unsigned rootVertex){
 float Graph::eccentricity(unsigned root){
   float eccentricity;
   dijkstra(root);
+  //for (unsigned i=1; i < mMinDist.size(); i++){
+  //  cout << "mMinDist[" << i << "]: " << mMinDist.at(i) << endl;
+  //}
   return eccentricity = *max_element(mMinDist.begin()+1, mMinDist.end());
 }
 /*Método que encontra o menor caminho entre dois pesquisadores*/
@@ -339,7 +340,7 @@ void Graph::greatestDegrees() {
 	cout << vertexName[third] << " " << getDegree(third) << endl;
 }
 /*Função que escolhe o algotimo de busca e determina distancia e caminho minimos*/
-void search(unsigned root, unsigned leaf){
+void Graph::search(unsigned root, unsigned leaf){
   vector<int> path;
   unsigned currentVertex;
 
@@ -349,23 +350,25 @@ void search(unsigned root, unsigned leaf){
    breadthFirstSearch(root);
  }
  if(leaf){
-   if(min_dist[leaf] == INT_MAX){
-     cout << "Não há caminho entre os vértices "<< root << " e " << leaf << "."<< endl;
+   if(mMinDist[leaf] == INT_MAX){
+     cout << "Nao ha caminho entre os vertices "<< root << " e " << leaf << "."<< endl;
    } else {
-     cout << "Distância entre os vértices " << root << " e " << leaf << ": " << min_dist[leaf] << endl;
-     cout << "Caminho entre os vértices " << root << " e " << leaf << ": " << endl;
+     cout << "Distancia entre os vertices " << root << " e " << leaf << ": " << mMinDist[leaf] << endl;
+     cout << "Caminho entre os vertices " << root << " e " << leaf << ": ";
 
      currentVertex=leaf;
-     while (currentVertex != parent.at(currentVertex)) {
+     while (currentVertex != mParent.at(currentVertex)) {
        path.push_back(currentVertex);
-       currentVertex = parent[currentVertex];
+       currentVertex = mParent[currentVertex];
      }
-     for (unsigned i = path.size()-1; i >= 0; i--) {
-       cout << path[i] << " ";
+     path.push_back(currentVertex);
+     for (unsigned i = path.size()-1; i > 0; i--) {
+       cout << path[i] << ", ";
      }
-     cout << endl;
+     cout << path.at(0) << endl;
    }
  }
+ cout << endl;
 }
 /*Método que imprime o grafo (deve ser usado apenas em grafos muito pequenos)*/
 void Graph::print (){

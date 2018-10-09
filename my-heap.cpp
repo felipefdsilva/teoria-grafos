@@ -11,9 +11,7 @@
 
 /*Construtor da classe MyHeap*/
 MyHeap::MyHeap (unsigned n) {
-	for (unsigned i=0; i<n; i++) {
-		mHeapIndex.push_back(-1);
-	}
+	mHeapIndex.resize(n);
 }
 /*Destrutor da classe MyHeap*/
 MyHeap::~MyHeap (){
@@ -22,16 +20,16 @@ MyHeap::~MyHeap (){
 void MyHeap::push(Vertex vertex) {
 	Vertex temp;
 	mQueue.push_back(vertex); //adiciona o vertice no heap
-	unsigned position = mQueue.size()-1; //obtem o novo tamanho do heap (numero de vertices)
-	mHeapIndex[vertex.getIndex()] = position; //salva a posição do vertice no heap (final do heap) num vetor de posições
+	unsigned position = mQueue.size(); //obtem o novo tamanho do heap (numero de vertices)
+	mHeapIndex[vertex.getIndex()-1] = position-1; //salva a posição do vertice no heap (final do heap) num vetor de posições
 
-	if (position != 1) {
-		while (mQueue[position] < mQueue[floor(position/2)]) {//laço para rearrumar o heap
-			temp = mQueue[floor(position/2)];
-			mQueue[floor(position/2)] = mQueue[position];
-			mQueue[position]=temp;
-			mHeapIndex[mQueue[position].getIndex()]=position;
-			mHeapIndex[mQueue[floor(position/2)].getIndex()]=floor(position/2);
+	if (position != 1) {//se há mais de um elemento no heap
+		while (mQueue[position-1] < mQueue[floor(position/2)-1]) {//laço para rearrumar o heap
+			temp = mQueue[floor(position/2)-1];
+			mQueue[floor(position/2)-1] = mQueue[position-1];
+			mQueue[position-1]=temp;
+			mHeapIndex[mQueue[position-1].getIndex()-1]=position-1;
+			mHeapIndex[mQueue[floor(position/2)-1].getIndex()-1]=floor(position/2)-1;
 			position=floor(position/2);
 			if (position==1) {
 				break;
@@ -42,25 +40,27 @@ void MyHeap::push(Vertex vertex) {
 /*Método que remove a raíz do heap*/
 Vertex MyHeap::pop() {
 	Vertex temp;
-	Vertex popedVertex = mQueue[1];
-	mQueue[1]=mQueue.back(); //pega o vertice do final do heap e coloca na raiz
+	Vertex popedVertex = mQueue[0];
+	mQueue[0]=mQueue.back(); //pega o vertice do final do heap e coloca na raiz
 	mQueue.pop_back(); //diminui o tamanho do heap
 
-	mHeapIndex[mQueue[1].getIndex()]=1; //o vertice colocado na raiz agora esta na posição 1 do heap
-	for (unsigned i=1; (2*i) < mQueue.size(); i=2*i) { //laço para rearrumar o heap
-			temp = mQueue[i];
+	mHeapIndex[mQueue[0].getIndex()-1]=0; //o vertice colocado na raiz agora esta na posição 0 do heap
+	unsigned i=1;
+	while ((2*i-1) < mQueue.size()) { //laço para rearrumar o heap
+			temp = mQueue[i-1];
 			if ((2*i) < mQueue.size()) {
-				if (mQueue[2*i] < mQueue[2*i] && mQueue[i] > mQueue[2*i]) {
-					mQueue[i-1] = mQueue[2*i];
-					mQueue[2*i] = temp;
-					mHeapIndex[mQueue[2*i].getIndex()] = 2*i;
-					mHeapIndex[mQueue[i].getIndex()] = i;
+				if (mQueue[2*i-1] < mQueue[2*i] && mQueue[i-1] > mQueue[2*i-1]) {
+					mQueue[i-1] = mQueue[2*i-1];
+					mQueue[2*i-1] = temp;
+					mHeapIndex[mQueue[2*i-1].getIndex()-1] = 2*i-1;
+					mHeapIndex[mQueue[i-1].getIndex()-1] = i-1;
+					i=2*i;
 				}
 				else if (mQueue[i-1] > mQueue[2*i]){
-					mQueue[i] = mQueue[2*i];
+					mQueue[i-1] = mQueue[2*i];
 					mQueue[2*i] = temp;
-					mHeapIndex[mQueue[2*i].getIndex()] = 2*i;
-					mHeapIndex[mQueue[i].getIndex()] = i;
+					mHeapIndex[mQueue[2*i].getIndex()-1] = 2*i;
+					mHeapIndex[mQueue[i-1].getIndex()-1] = i-1;
 					i = 2*i+1;
 				}
 				else {
@@ -68,11 +68,11 @@ Vertex MyHeap::pop() {
 				}
 			}
 			else {
-				if (mQueue[i] > mQueue[2*i]) {
-					mQueue[i] = mQueue[2*i];
-					mQueue[2*i] = temp;
-					mHeapIndex[mQueue[2*i].getIndex()] = 2*i;
-					mHeapIndex[mQueue[i].getIndex()] = i;
+				if (mQueue[i-1] > mQueue[2*i-1]) {
+					mQueue[i-1] = mQueue[2*i-1];
+					mQueue[2*i-1] = temp;
+					mHeapIndex[mQueue[2*i-1].getIndex()-1] = 2*i-1;
+					mHeapIndex[mQueue[i-1].getIndex()-1] = i-1;
 					i = 2*i;
 				}
 				else {
@@ -85,19 +85,19 @@ Vertex MyHeap::pop() {
 /*Método que atualiza a distancia de um vertice do heap*/
 void MyHeap::update(unsigned vertex, float distance) {
 	Vertex temp;
-	unsigned vIndex = mHeapIndex[vertex]; //identifica a posição do vertice no heap
+	unsigned vIndex = mHeapIndex[vertex-1]; //identifica a posição do vertice no heap
 	mQueue[vIndex].setDistance(distance); //atualiza sua distancia
 
 	unsigned i = vIndex + 1;
 	/*Rearrumando o heap*/
-	if (mQueue[i] < mQueue[floor(i/2)]) {
+	if (mQueue[i-1] < mQueue[floor(i/2)-1]) {
 		if (i != 1) {
-			while (mQueue[i] < mQueue[floor(i/2)]) {
-				temp = mQueue[floor(i/2)];
-				mQueue[floor(i/2)] = mQueue[i];
-				mQueue[i] = temp;
-				mHeapIndex[mQueue[i].getIndex()] = i;
-				mHeapIndex[mQueue[floor(i/2)].getIndex()] = floor(i/2);
+			while (mQueue[i-1] < mQueue[floor(i/2)-1]) {
+				temp = mQueue[floor(i/2)-1];
+				mQueue[floor(i/2)-1] = mQueue[i-1];
+				mQueue[i-1] = temp;
+				mHeapIndex[mQueue[i-1].getIndex()-1] = i-1;
+				mHeapIndex[mQueue[floor(i/2)-1].getIndex()-1] = floor(i/2)-1;
 				i = floor(i/2);
 				if (i==1) {
 					break;
@@ -106,21 +106,21 @@ void MyHeap::update(unsigned vertex, float distance) {
 		}
 	}
 	else {
-		while ((2*i) < mQueue.size()) {
-			temp = mQueue[i];
+		while ((2*i-1) < mQueue.size()) {
+			temp = mQueue[i-1];
 			if ((2*i) < mQueue.size()) {
-				if (mQueue[2*i] < mQueue[2*i] && mQueue[i] > mQueue[2*i]) {
-					mQueue[i] = mQueue[2*i];
-					mQueue[2*i] = temp;
-					mHeapIndex[mQueue[2*i].getIndex()] = 2 * i;
-					mHeapIndex[mQueue[i].getIndex()] = i;
-					i = 2 * i;
+				if (mQueue[2*i-1] < mQueue[2*i] && mQueue[i-1] > mQueue[2*i-1]) {
+					mQueue[i-1] = mQueue[2*i-1];
+					mQueue[2*i-1] = temp;
+					mHeapIndex[mQueue[2*i-1].getIndex()-1] = 2*i-1;
+					mHeapIndex[mQueue[i-1].getIndex()-1] = i-1;
+					i=2*i;
 				}
 				else if (mQueue[i-1]>mQueue[2*i]){
-					mQueue[i]=mQueue[2*i];
+					mQueue[i-1]=mQueue[2*i];
 					mQueue[2*i]=temp;
-					mHeapIndex[mQueue[2*i].getIndex()] = 2*i;
-					mHeapIndex[mQueue[i].getIndex()] = i;
+					mHeapIndex[mQueue[2*i].getIndex()-1] = 2*i;
+					mHeapIndex[mQueue[i-1].getIndex()-1] = i-1;
 					i=2*i+1;
 				}
 				else {
@@ -128,11 +128,11 @@ void MyHeap::update(unsigned vertex, float distance) {
 				}
 			}
 			else {
-				if (mQueue[i]>mQueue[2*i]) {
-					mQueue[i]=mQueue[2*i];
-					mQueue[2*i] = temp;
-					mHeapIndex[mQueue[2*i].getIndex()] = 2*i;
-					mHeapIndex[mQueue[i].getIndex()] = i;
+				if (mQueue[i-1]>mQueue[2*i-1]) {
+					mQueue[i-1]=mQueue[2*i-1];
+					mQueue[2*i-1] = temp;
+					mHeapIndex[mQueue[2*i-1].getIndex()-1] = 2*i-1;
+					mHeapIndex[mQueue[i-1].getIndex()-1] = i-1;
 					i = 2*i;
 				}
 				else {

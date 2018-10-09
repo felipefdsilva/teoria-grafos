@@ -37,7 +37,7 @@ AdjacencyList::AdjacencyList (char *graphFile) {
   while (file.good()) {
     getline(file, line, '\n');
     splitString (line, " ", verticesAndWeight, begin);
-    if (verticesAndWeight.size()-begin) == 3 && flag == false){
+    if ((verticesAndWeight.size()-begin) == 3 && flag == false){
       setWeightedGraphStatus(true);
     }
     flag = true;
