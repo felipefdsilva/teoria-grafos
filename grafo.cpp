@@ -8,14 +8,16 @@
 
 #include <iostream> //para função print
 #include <queue> //para a fila da bfs
-#include <string>
+#include <string> //para o tipo string
 #include <algorithm> //para min, max
 #include "headers/grafo.h" //declaração da classe grafo
 
 using namespace std;
 
+/*Construtor*/
 Graph::Graph (){
 }
+/*Destrutor*/
 Graph::~Graph(){
 }
 void Graph::setNumberOfVertices (unsigned numberOfVertices){
@@ -24,6 +26,18 @@ void Graph::setNumberOfVertices (unsigned numberOfVertices){
 /*Método que configura o número de arestas do grafo*/
 void Graph::setNumberOfEdges (unsigned numberOfEdges){
   mNumberOfEdges = numberOfEdges;
+}
+/*Método para redimensionar o tamanho do vetor de graus*/
+void Graph::resizeDegreeVector (unsigned size){
+  mDegree.resize(size);
+}
+/*Método que incrementa o grau de um vertice*/
+void Graph::incrementDegree (unsigned vertex) {
+  mDegree.at(vertex) = mDegree.at(vertex)+1;
+}
+/*Método que retorna o grau de um vertice*/
+unsigned Graph::getDegree (unsigned vertex){
+  return mDegree.at(vertex);
 }
 /*Método que retorna o número de vertices do grafo*/
 unsigned Graph::getNumberOfVertices () const{
@@ -43,18 +57,21 @@ float Graph::getWeight (unsigned vertex1, unsigned vertex2){
   pair<unsigned, unsigned> edge(max(vertex1, vertex2), min(vertex1, vertex2));
   return mWeight[edge];
 }
-/*Método que calcula a distância média do grafo*/
-float averageDistance(){
+/*Método que calcula a distância média da componente conexa de um grafo*/
+float Graph::averageDistance(){
   float total_dist = 0;
-
-  for (unsigned i = 0; i < mNumberOfVertices; i++){
-    dijkstra(i+1);
-    for (unsigned j = 1; j <= mNumberOfVertices; j++) {
-      if (mMinDist[j] < INT_MAX){
-        total_dist += mMinDist[j];
+  float pairsCount = numberOfVertices*(numberOfVertices-1)/2 //numero máximo de pares de vertice (caso do grafo conexo)
+  for (unsigned i = 1; i <= mNumberOfVertices; i++){ //para cada vertice, roda-se dijkstra
+    dijkstra(i);
+    for (unsigned j = 1; j <= mNumberOfVertices; j++) { //para cada vertice, checa-se a distancia dada por dijkstra
+      if (mMinDist[j] < INT_MAX){ //se a distancia não for infinita
+        total_dist += mMinDist[j]; //soma a distancia
+      }
+      else { //neste caso, grafo não é conexo
+        pairsCount--; //reduz-se o numero total de pares de vertices possíveis
       }
     }
-    return total_dist/mNumberOfEdges;
+    return total_dist/pairsCount;
   }
 }
 /*Método que implementa a busca em largura*/
@@ -93,7 +110,6 @@ float Graph::dijkstra(unsigned rootVertex){
   vector <unsigned> neighbours; //vetor de vizinhos de um vertice
   pair<unsigned, unsigned> tempEdge;
   unsigned neighbour;
-  float eccentricity;
   myHeap heap (mNumberOfVertices);
 
   mMinDist.assign(mNumberOfVertices+1, INT_MAX); //inicia o vetor de distancias com infinito
@@ -124,8 +140,6 @@ float Graph::dijkstra(unsigned rootVertex){
       }
     }
   }
-  eccentricity = minDistVertex;
-  return eccentricity;
 }
 /*Método que implementa o algoritmo de Prim*/
 void Graph::prim(unsigned rootVertex){
@@ -166,7 +180,7 @@ void Graph::prim(unsigned rootVertex){
       }
     }
   }
-  myFile.open("mst.txt");
+  myFile.open("resultados - parte 2/mst.txt");
   myFile << mNumberOfVertices << "\n";
   for (unsigned i = 1; i <= parent.size(); i++) {
     if(parent[i] > 0){
@@ -178,8 +192,14 @@ void Graph::prim(unsigned rootVertex){
   myFile << totalWeight;
   myFile.close();
 }
+/*Método que calcula a Excentricidade de um vertice*/
+float Graph::eccentricity(unsigned root){
+  float eccentricity;
+  dijkstra(root);
+  return eccentricity = *max_element(mMinDist.begin()+1, mMinDist.end());
+}
 /*Método que encontra o menor caminho entre dois pesquisadores*/
-void minPathBetweenResearchers(const char* person1, const char* person2){
+void Graph::minPathBetweenResearchers(const char* person1, const char* person2){
  ifstream myNetMap;
  myNetMap.open("rede_colaboracao_vertices.txt"); //abre o arquivo de mapeamento
  stringstream iss;
@@ -216,7 +236,7 @@ void minPathBetweenResearchers(const char* person1, const char* person2){
  }
 }
 /*Método que determina os vizinhos de Dijkstra e Ratton*/
-void printNeighbours(const char * pName) {
+void Graph::printNeighbours(const char * pName) {
   ifstream myNetMap;
   vector <unsigned> neighbours;
 	myNetMap.open("rede_colaboracao_vertices.txt");
@@ -226,14 +246,11 @@ void printNeighbours(const char * pName) {
 	string name[2];
 	unsigned path;
 	bool empty = vertexName.empty();
-  unsigned i;
 
 	while(getline(myNetMap, line, '\n')) { //lê as linhas do arquivo de mapeamento
 	 	iss << line;
-	 	i = 0;
-	 	while(getline(iss, line2, ',')){ //lê cada string separada por virgula ex:"5,nome-do-pesquisador"
+	 	for (unsigned i=0; getline(iss, line2, ','); i++){ //lê cada string separada por virgula ex:"5,nome-do-pesquisador"
 	 		name[i] = line2;
-	 		i++;
 	 	}
 	 	if (string(name[1]) == string(pName)) { //se o nome do pesquisar é o desejado
  			path = stoi(name[0], nullptr, 10); //salvar o indice correspondente ao vertice do grafo
@@ -253,8 +270,8 @@ void printNeighbours(const char * pName) {
 	}
 }
 /*Método que determina os três vértices de maior grau (pessoas e os graus)*/
-void greatestDegrees() {
-	unsigned first=0, second=0, third=0;
+void Graph::greatestDegrees() {
+	unsigned newDegree, first=1, second=1, third=1;
 	bool empty=vertex_name.empty();
   vector<unsigned> neighbours;
   unsigned numberOfNeighbours1, numberOfNeighbours2;
@@ -279,32 +296,25 @@ void greatestDegrees() {
 		}
 		myNetMap.close();
 	}
-	for (unsigned i=1; i <= mNumberOfVertices; i++) {
-    getNeighbours(i, &neighbours); //encontrando os vizinhos do vertice
-    numberOfNeighbours1 = neighbours.size(); //salvando o grau do vertice
-    getNeighbours(first, &neighbours); //encontrando os vizinhos do vertice
-    numberOfNeighbours2 = neighbours.size(); //salvando o grau do vertice
-    getNeighbours(second, &neighbours); //encontrando os vizinhos do vertice
-    numberOfNeighbours3 = neighbours.size(); //salvando o grau do vertice
-    getNeighbours(third, &neighbours); //encontrando os vizinhos do vertice
-    numberOfNeighbours4 = neighbours.size(); //salvando o grau do vertice
+	for (unsigned i=2; i <= mNumberOfVertices; i++) {
+    newDegree = getDegree(i); //salvando o grau do i-ésimo vertice
 
-		if (numberOfNeighbours1 > numberOfNeighbours2) {
+		if (newDegree > getDegree(first)) {
 			third=second;
 			second=first;
 			first=i;
 		}
-		else if (numberOfNeighbours1 > numberOfNeighbours3) {
+		else if (newDegree > getDegree(second)) {
 			third=second;
 			second=i;
 		}
-		else if (numberOfNeighbours1 > numberOfNeighbours4) {
+		else if (newDegree > getDegree(third)) {
 			third=i;
 		}
 	}
-	cout << vertex_name[first] << " " << container.getDegree(first) << endl;
-	cout << vertex_name[second] << " " << container.getDegree(second) << endl;
-	cout << vertex_name[third] << " " << container.getDegree(third) << endl;
+	cout << vertexName[first] << " " << getDegree(first) << endl;
+	cout << vertexName[second] << " " << getDegree(second) << endl;
+	cout << vertexName[third] << " " << getDegree(third) << endl;
 }
 /*Método que imprime o grafo (deve ser usado apenas em grafos muito pequenos)*/
 void Graph::print (){

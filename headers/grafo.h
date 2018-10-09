@@ -21,20 +21,24 @@ class Graph {
     /*Métodos de encapsulamento*/
     virtual void setNeighbours (unsigned, unsigned) = 0;//configura os vizinhos de acordo com a representação
     void setNumberOfVertices (unsigned); //configura o numero de vertices do grafo
-    void setNumberOfEdges (unsigned); //configura o numero de arestas
+    void setNumberOfEdges (unsigned); //configura o numero de aresta
+    void resizeDegreeVector(unsigned); //redimensiona o tamanho do vetor de graus dos vertices
+    void incrementDegree (unsigned); //incrementa o grau do vertice
     unsigned getNumberOfVertices () const; //retorna o número de vertices
     unsigned getNumberOfEdges () const; //retorna o número de arestas
     virtual void getNeighbours (unsigned, vector<unsigned> *) = 0;//obtém os vizinhos do vertice de acordo com a representação
+    unsigned getDegree (unsigned);//retorna o grau de vertice
     void setWeight(unsigned, unsigned, float); //insere o peso de uma aresta no vetor de pesos
     float getWeight (unsigned, unsigned); //returna o peso de uma aresta do grafo
     float averageDistance(); //calcula a distancia média do grafo
     /*Métodos de busca no grafo*/
     virtual void breadthFirstSearch (unsigned); //realiza a busca em largura
     //virtual void depthFirstSearch (unsigned); //realiza a busca em profundidade
-    float dijkstra (unsigned); //determina caminhos mínimos em grafos com pesos
-    void prim(unsigned); //determina uma mst de um grafo com pesos
+    virtual float dijkstra (unsigned); //determina caminhos mínimos em grafos com pesos
+    virtual void prim(unsigned); //determina uma mst de um grafo com pesos
+    void eccentricity(unsigned); //determina a excentricidade de um vertice
     void minPathBetweenResearchers(const char*, const char*); //determina o menor caminho entre pesquisadores
-    void printNeighbours(const char *); //imprime os vizinhos de um pesquisador no grafo
+    virtual void printNeighbours(const char *); //imprime os vizinhos de um pesquisador no grafo
     void greatestDegrees(); //obtem os maiores três graus de um grafo
     /*Método para testes*/
     virtual void print ();//imprime o grafo
@@ -45,6 +49,7 @@ class Graph {
     vector <float> mMinDist; //usado por djkistra para determinar a distancia minima
     vector <unsigned> mParent; //usado por djkistra para determinar a arvore geradora
     map <int, string>  vertexName;
+    vector <unsigned> mDegree; //vetor com os graus do vertices
 };
 
 #endif

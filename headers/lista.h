@@ -25,12 +25,12 @@ class AdjacencyList: public Graph {
     virtual void getNeighbours (unsigned, vector<unsigned> *);
     /*Métodos para busca no grafo*/
     virtual void breadthFirstSearch (unsigned);//busca em largura
-    //virtual void depthFirstSearch (unsigned);//busca em profundidade
+    virtual float dijkstra (unsigned); //determina caminhos mínimos em grafos com pesos
+    virtual void prim(unsigned); //determina uma mst de um grafo com pesos
     /*Método para teste*/
+    virtual void printNeighbours(const char *);
     virtual void print (); //imprime o grafo
     //unsigned connectedComponents (unsigned);
-    //unsigned getHeight (unsigned,unsigned);
-    //unsigned getDiameter (unsigned);
   private:
     vector <forward_list <unsigned> > mAdjList; //representação do grafo como vetor de listas encadeadas
 };

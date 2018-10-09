@@ -12,16 +12,16 @@
 class Vertex {
 	friend ostream & operator <<(ostream & s, const Vertex & z);
 	public:
-		Vertex (int, float);
-		unsigned getIndex ();
-		void setDistance (float);
-		float getDistance ();
-		bool operator<(const Vertex &x);
-		bool operator>(const Vertex &x);
-		void operator=(const Vertex &x);
+		Vertex (int, float); //construtor
+		unsigned getIndex (); //retorna o indice que identifica o vertice
+		void setDistance (float); //configura a distancia para este vertice a partir de uma raiz conhecida
+		float getDistance (); //retorna a distancia para o vertice
+		bool operator<(const Vertex &x); //sobrecarga do operador 'menor que' para comparar distancias dos vertices
+		bool operator>(const Vertex &x); //sobrecarga do operador 'maior que' para comparar distancias dos vertices
+		void operator=(const Vertex &x); //sobrecarga do operador 'igual a' para copiar um vertice
 	private:
-		int mIndex;
-		float mDistance;
+		int mIndex; //atributo que identifica o vertice
+		float mDistance; //atributo que indica a distancia para chegar ao vertice
 };
 
 #endif
