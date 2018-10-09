@@ -7,7 +7,7 @@
 */
 
 #include <cmath> //para a função floor
-#include "headers/my-heap.h"
+#include "my-heap.h"
 
 /*Construtor da classe MyHeap*/
 MyHeap::MyHeap (unsigned n) {
@@ -15,11 +15,14 @@ MyHeap::MyHeap (unsigned n) {
 		mHeapIndex.push_back(-1);
 	}
 }
+/*Destrutor da classe MyHeap*/
+MyHeap::~MyHeap (){
+}
 /*Método que adiciona um elemento ao heap*/
 void MyHeap::push(Vertex vertex) {
 	Vertex temp;
 	mQueue.push_back(vertex); //adiciona o vertice no heap
-	unsigned position = mQueue.size(); //obtem o novo tamanho do heap (numero de vertices)
+	unsigned position = mQueue.size()-1; //obtem o novo tamanho do heap (numero de vertices)
 	mHeapIndex[vertex.getIndex()] = position; //salva a posição do vertice no heap (final do heap) num vetor de posições
 
 	if (position != 1) {
@@ -146,7 +149,7 @@ void MyHeap::show() {
 	}
 	cout << endl;
 }
-/*Método que destroi o heap*/
+/*Método que confere se o heap está vazio*/
 bool MyHeap::empty() {
-	return mQueue.size()==0;
+	return mQueue.empty();
 }

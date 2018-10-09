@@ -9,7 +9,7 @@
 * Implementação da Função Global Split
 */
 
-#include "headers/split.h"
+#include "split.h"
 
 void splitString (string str, string delimiter, vector<string> &v, unsigned &begin){
   unsigned position = str.find(delimiter);

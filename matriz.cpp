@@ -7,7 +7,7 @@
 */
 
 #include <fstream>
-#include "headers/matriz.h"
+#include "matriz.h"
 
 using namespace std;
 

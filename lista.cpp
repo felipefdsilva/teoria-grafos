@@ -8,8 +8,8 @@
 
 #include <fstream>
 #include <string>
-#include "headers/split.h"
-#include "headers/lista.h"
+#include "split.h"
+#include "lista.h"
 
 using namespace std;
 
@@ -21,6 +21,7 @@ AdjacencyList::AdjacencyList (char *graphFile) {
   unsigned begin;
   unsigned edgeCount = 0;
   string line;
+  bool flag = false;
   vector <string> verticesAndWeight (0);
 
   ifstream file (graphFile, ifstream::in); //abre arquivo para leitura
@@ -36,19 +37,23 @@ AdjacencyList::AdjacencyList (char *graphFile) {
   while (file.good()) {
     getline(file, line, '\n');
     splitString (line, " ", verticesAndWeight, begin);
+    if (verticesAndWeight.size()-begin) == 3 && flag == false){
+      setWeightedGraphStatus(true);
+    }
+    flag = true;
     if (begin != verticesAndWeight.size()) { //evita ler o "\n" no final do arquivo
       vertex1 = stoi (verticesAndWeight.at(begin), nullptr, 10); //converte vertice de string para inteiro
       vertex2 = stoi (verticesAndWeight.at(begin+1), nullptr, 10); //converte vertice de string para inteiro
       if (vertex1 <= numberOfVertices && vertex2 <= numberOfVertices){ //evita leitura de vertices invalidos
         setNeighbours(vertex1, vertex2); //adiciona info na lista de adjacências
         edgeCount++; //incrementa numero de arestas
-        if ((verticesAndWeight.size()-begin) == 3){ //se existe peso
-          weight = stof(verticesAndWeight.at(begin+2), nullptr, 10);
+        if (weighted()){ //se existe peso
+          weight = stof(verticesAndWeight.at(begin+2), nullptr);
           if (weight < 0){
             cout << "Os pesos das arestas devem ser todos positivos" << endl;
             exit (1);
           }
-          Graph::setWeight (vertex1, vertex2, weight)
+          Graph::setWeight (vertex1, vertex2, weight);
         }
       }
     }

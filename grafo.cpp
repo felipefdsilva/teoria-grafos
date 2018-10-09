@@ -10,7 +10,10 @@
 #include <queue> //para a fila da bfs
 #include <string> //para o tipo string
 #include <algorithm> //para min, max
-#include "headers/grafo.h" //declaração da classe grafo
+#include <fstream>
+#include <sstream>
+#include "grafo.h" //declaração da classe grafo
+#include "my-heap.h" //para o objeto MyHeap
 
 using namespace std;
 
@@ -47,20 +50,28 @@ unsigned Graph::getNumberOfVertices () const{
 unsigned Graph::getNumberOfEdges () const{
   return mNumberOfEdges;
 }
+/*Método que configura a flag de grafo com peso*/
+void setWeightedGraphStatus (bool status){
+  mWeightedGraph = status;
+}
+/*metodo que retorna o valor da flag de grafo com peso*/
+bool weighted (){
+  return mWeightedGraph;
+}
 /*Método que configura o peso de uma aresta*/
 void Graph::setWeight (unsigned vertex1, unsigned vertex2, float weight){
   pair<unsigned, unsigned> edge(max(vertex1, vertex2), min(vertex1, vertex2));
-  mWeight[edge]= weight;
+  mWeights[edge] = weight;
 }
 /*Método que retorna o peso de uma aresta*/
 float Graph::getWeight (unsigned vertex1, unsigned vertex2){
   pair<unsigned, unsigned> edge(max(vertex1, vertex2), min(vertex1, vertex2));
-  return mWeight[edge];
+  return mWeights[edge];
 }
 /*Método que calcula a distância média da componente conexa de um grafo*/
 float Graph::averageDistance(){
   float total_dist = 0;
-  float pairsCount = numberOfVertices*(numberOfVertices-1)/2 //numero máximo de pares de vertice (caso do grafo conexo)
+  float pairsCount = mNumberOfVertices*(mNumberOfVertices-1)/2; //numero máximo de pares de vertice (caso do grafo conexo)
   for (unsigned i = 1; i <= mNumberOfVertices; i++){ //para cada vertice, roda-se dijkstra
     dijkstra(i);
     for (unsigned j = 1; j <= mNumberOfVertices; j++) { //para cada vertice, checa-se a distancia dada por dijkstra
@@ -109,8 +120,10 @@ void Graph::breadthFirstSearch (unsigned root){//, vector<unsigned> *Vertices, S
 float Graph::dijkstra(unsigned rootVertex){
   vector <unsigned> neighbours; //vetor de vizinhos de um vertice
   pair<unsigned, unsigned> tempEdge;
+  unsigned numberOfNeighbours;
   unsigned neighbour;
-  myHeap heap (mNumberOfVertices);
+  Vertex vertex, minDistVertex;
+  MyHeap heap (mNumberOfVertices);
 
   mMinDist.assign(mNumberOfVertices+1, INT_MAX); //inicia o vetor de distancias com infinito
   mParent.assign(mNumberOfVertices+1, 0);  //inicia o vetor de pais com 0
@@ -122,15 +135,16 @@ float Graph::dijkstra(unsigned rootVertex){
   heap.push(vertexZero); //posição 0 do heap é um vertice que não deve ser usado (não existe no grafo)
 
   for(unsigned i = 1; i <= mNumberOfVertices; i++){ //inicialização do heap
-    Vertex vertex(i, mMinDist[i]);
+    vertex.setIndex(i);
+    vertex.setDistance(mMinDist[i]);
     heap.push(vertex);
   }
   while (!heap.empty()){
-    Vertex minDistVertex = heap.pop(); //retira do heap o vertice com menor distancia conhecida
+    minDistVertex = heap.pop(); //retira do heap o vertice com menor distancia conhecida
     unsigned explored = minDistVertex.getIndex(); //identifica o vertice retirado
     getNeighbours(explored, &neighbours); //encontra os vizinhos do vertice
     numberOfNeighbours = neighbours.size(); //salvando o grau do vertice
-    for (unsigned i=1; i <= numberOfNeighbours; i++){ //para cada vizinho
+    for (unsigned i=0; i < numberOfNeighbours; i++){ //para cada vizinho
       neighbour = neighbours.at(i); //seleciona um vizinho
       tempEdge = make_pair(max(explored, neighbour), min(explored, neighbour)); //define a aresta, para encontrar o peso
       if (mMinDist[neighbour] > mMinDist[explored] + mWeights[tempEdge]){//se a distancia anterior for maior que a nova
@@ -146,11 +160,13 @@ void Graph::prim(unsigned rootVertex){
   float totalWeight = 0;
   pair<unsigned, unsigned> tempEdge;
   unsigned neighbour;
+  unsigned numberOfNeighbours;
   vector <unsigned> neighbours; //vetor de vizinhos de um vertice
   vector<unsigned> parent(mNumberOfVertices, 0); //vetor de pais para a mst
   vector<bool> markingStatus(mNumberOfVertices, false); //vetor de marcação do vertice (explorado ou não)
-  myHeap heap(mNumberOfVertices); //arvore geradora minima
+  MyHeap heap(mNumberOfVertices); //arvore geradora minima
   ofstream myFile;
+  Vertex vertex, minDistVertex;
 
   mMinDist.assign(mNumberOfVertices, INT_MAX); //resetando o vetor de distancias
 
@@ -161,19 +177,20 @@ void Graph::prim(unsigned rootVertex){
   heap.push(vertexZero); //posição 0 do heap é um vertice que não deve ser usado (não existe no grafo)
 
   for(unsigned i = 1; i <= mNumberOfVertices; i++){ //inicializando o heap
-    Vertex vertex(i, mMinDist[i]);
+    vertex.setIndex(i);
+    vertex.setDistance(mMinDist[i]);
     heap.push(vertex);
   }
   while(!heap.empty()){
-    Vertex minDistVertex = heap.pop(); //retira o vertice do topo do heap
+    minDistVertex = heap.pop(); //retira o vertice do topo do heap
     unsigned explored = minDistVertex.getIndex(); //identifica o vertice com menor caminho conhecido
     markingStatus[explored]=true; //marca o vertice como explorado
     getNeighbours(explored, &neighbours); //encontrando os vizinhos do vertice
     numberOfNeighbours = neighbours.size(); //salvando o grau do vertice
-    for (unsigned i = 1; i <= numberOfNeighbours; i++) { //para cada vizinho do vertice explorado
+    for (unsigned i = 0; i < numberOfNeighbours; i++) { //para cada vizinho do vertice explorado
       neighbour = neighbours.at(i);//seleciona um vizinho
       tempEdge = make_pair(max(explored, neighbour), min(explored, neighbour)); //define a aresta
-      if (mMinDist[explored] > mWeights[tempEdge] && marking[neighbour] == false){
+      if (mMinDist[explored] > mWeights[tempEdge] && markingStatus[neighbour] == false){
           parent[neighbour] = explored;
           mMinDist[neighbour] = mWeights[tempEdge];
           heap.update(neighbour, mMinDist[neighbour]);
@@ -201,11 +218,11 @@ float Graph::eccentricity(unsigned root){
 /*Método que encontra o menor caminho entre dois pesquisadores*/
 void Graph::minPathBetweenResearchers(const char* person1, const char* person2){
  ifstream myNetMap;
- myNetMap.open("rede_colaboracao_vertices.txt"); //abre o arquivo de mapeamento
+ myNetMap.open("grafos/rede_colaboracao_vertices.txt"); //abre o arquivo de mapeamento
  stringstream iss;
  string line, line2;
  string name[2];
- vector <unsigned> path(2);
+ vector <unsigned> path(2,0);
  vector<unsigned> spath;
  unsigned currentVertex;
 
@@ -223,6 +240,10 @@ void Graph::minPathBetweenResearchers(const char* person1, const char* person2){
      path[1]=stoi(name[0], nullptr, 10); //salva o indice do vertice correspondente
    }
  }
+ if (!(path[0] && path[1])){
+   cout << "Researcher not found" << endl;
+   exit(1);
+ }
  myNetMap.close(); //fecha o arquivo de mapeamento
  dijkstra(path[0]); //roda dijkstra para encontrar o caminho da pessoa 1 para a pessoa 2
  currentVertex = path[1]; //imprime o caminho a partir da pessoa 2, olhando o pai de cada vertice do caminho
@@ -231,7 +252,7 @@ void Graph::minPathBetweenResearchers(const char* person1, const char* person2){
    spath.push_back(currentVertex); //salva o caminho
    currentVertex = mParent.at(currentVertex); //passa para o pai
  }
- for (unsigned i = spath.size()-1; i >= 1; i--) { //imprime o caminho
+ for (unsigned i = spath.size()-1; i > 0; i--) { //imprime o caminho
    cout << vertexName[spath[i]] << endl;
  }
 }
@@ -245,6 +266,7 @@ void Graph::printNeighbours(const char * pName) {
 	string line2;
 	string name[2];
 	unsigned path;
+  unsigned numberOfNeighbours;
 	bool empty = vertexName.empty();
 
 	while(getline(myNetMap, line, '\n')) { //lê as linhas do arquivo de mapeamento
@@ -272,7 +294,7 @@ void Graph::printNeighbours(const char * pName) {
 /*Método que determina os três vértices de maior grau (pessoas e os graus)*/
 void Graph::greatestDegrees() {
 	unsigned newDegree, first=1, second=1, third=1;
-	bool empty=vertex_name.empty();
+	bool empty=vertexName.empty();
   vector<unsigned> neighbours;
   unsigned numberOfNeighbours1, numberOfNeighbours2;
   unsigned i;
@@ -291,7 +313,7 @@ void Graph::greatestDegrees() {
 		 		name[i] = line2;
 		 		i++;
 		 	}
-		 	vertex_name[stoi(name[0], nullptr, 10)] = name[1];
+		 	vertexName[stoi(name[0], nullptr, 10)] = name[1];
 		 	iss.clear();
 		}
 		myNetMap.close();
@@ -315,6 +337,35 @@ void Graph::greatestDegrees() {
 	cout << vertexName[first] << " " << getDegree(first) << endl;
 	cout << vertexName[second] << " " << getDegree(second) << endl;
 	cout << vertexName[third] << " " << getDegree(third) << endl;
+}
+/*Função que escolhe o algotimo de busca e determina distancia e caminho minimos*/
+void search(unsigned root, unsigned leaf){
+  vector<int> path;
+  unsigned currentVertex;
+
+ if(weighted()){
+   dijkstra(root);
+ } else{
+   breadthFirstSearch(root);
+ }
+ if(leaf){
+   if(min_dist[leaf] == INT_MAX){
+     cout << "Não há caminho entre os vértices "<< root << " e " << leaf << "."<< endl;
+   } else {
+     cout << "Distância entre os vértices " << root << " e " << leaf << ": " << min_dist[leaf] << endl;
+     cout << "Caminho entre os vértices " << root << " e " << leaf << ": " << endl;
+
+     currentVertex=leaf;
+     while (currentVertex != parent.at(currentVertex)) {
+       path.push_back(currentVertex);
+       currentVertex = parent[currentVertex];
+     }
+     for (unsigned i = path.size()-1; i >= 0; i--) {
+       cout << path[i] << " ";
+     }
+     cout << endl;
+   }
+ }
 }
 /*Método que imprime o grafo (deve ser usado apenas em grafos muito pequenos)*/
 void Graph::print (){

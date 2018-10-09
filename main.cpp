@@ -9,7 +9,7 @@
 #include <ctime>
 #include <chrono>
 #include <iostream>
-#include "headers/lista.h"
+#include "lista.h"
 
 using namespace std::chrono;
 
@@ -34,9 +34,13 @@ int main (int argc, char *argv[]){
   clock_t start;
   start = clock();
 
-  cout << "Distância média: " << pGraph->averageDistance() << endl;
- 	teste.search("Antonio Albano", "Alex Aussem");
+  cout << "Distancia media: ";
+  cout << pGraph->averageDistance() << endl;
 
+  cout << "Calculando caminho minimo entre pesquisadores" << endl;
+ 	pGraph->minPathBetweenResearchers("Antonio Albano", "Alex Aussem");
+  cout << "Fim do calculo de caminho minimo" << endl;
+  
  	for (int i=1; i<=10; i++){
  		vertex = rand() % pGraph->getNumberOfVertices()+1;
  		eccentricity = pGraph->eccentricity(vertex);
