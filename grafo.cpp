@@ -72,7 +72,7 @@ float Graph::getWeight (unsigned vertex1, unsigned vertex2){
 /*Método que calcula a distância média da componente conexa de um grafo*/
 float Graph::averageDistance(){
   float total_dist = 0;
-  float pairsCount = mNumberOfVertices*(mNumberOfVertices-1); //numero máximo de pares de vertice (caso do grafo conexo)
+  float pairsCount = (mNumberOfVertices*(mNumberOfVertices-1))/2; //numero máximo de pares de vertice (caso do grafo conexo não-direcionado)
   for (unsigned i = 1; i <= mNumberOfVertices; i++){ //para cada vertice, roda-se dijkstra
     dijkstra(i);
     for (unsigned j = 1; j <= mNumberOfVertices; j++) { //para cada vertice, checa-se a distancia dada por dijkstra
