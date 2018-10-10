@@ -26,7 +26,7 @@ class AdjacencyList: public Graph {
     /*Métodos para busca no grafo*/
     virtual void breadthFirstSearch (unsigned);//busca em largura
     virtual float dijkstra (unsigned); //determina caminhos mínimos em grafos com pesos
-    virtual void prim(unsigned); //determina uma mst de um grafo com pesos
+    virtual float prim(unsigned); //determina uma mst de um grafo com pesos
     /*Método para teste*/
     virtual void printNeighbours(const char *);
     virtual void print (); //imprime o grafo

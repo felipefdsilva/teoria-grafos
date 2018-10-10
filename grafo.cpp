@@ -7,10 +7,10 @@
 */
 
 #include <iostream> //para função print
+#include <fstream> //para leitura de arquivo
 #include <queue> //para a fila da bfs
 #include <string> //para o tipo string
 #include <algorithm> //para min, max
-#include <fstream> //para leitura de arquivo
 #include <sstream> //para manipular strings
 #include "grafo.h" //declaração da classe grafo
 #include "my-heap.h" //para o objeto MyHeap
@@ -83,8 +83,8 @@ float Graph::averageDistance(){
         pairsCount--; //reduz-se o numero total de pares de vertices possíveis
       }
     }
-    return total_dist/pairsCount;
   }
+  return total_dist/pairsCount;
 }
 /*Método que implementa a busca em largura*/
 void Graph::breadthFirstSearch (unsigned root){//, vector<unsigned> *Vertices, SpanningTree *tree
@@ -154,25 +154,23 @@ float Graph::dijkstra(unsigned rootVertex){
   }
 }
 /*Método que implementa o algoritmo de Prim*/
-void Graph::prim(unsigned rootVertex){
+float Graph::prim(unsigned rootVertex){
   float totalWeight = 0;
   pair<unsigned, unsigned> tempEdge;
+  unsigned explored;
   unsigned neighbour;
   unsigned numberOfNeighbours;
   vector <unsigned> neighbours; //vetor de vizinhos de um vertice
-  vector<unsigned> parent(mNumberOfVertices, 0); //vetor de pais para a mst
   vector<bool> markingStatus(mNumberOfVertices, false); //vetor de marcação do vertice (explorado ou não)
   MyHeap heap(mNumberOfVertices); //arvore geradora minima
-  ofstream myFile;
   Vertex vertex, minDistVertex;
 
+  mParent.assign(mNumberOfVertices, 0); //vetor de pais para a mst
   mMinDist.assign(mNumberOfVertices, INT_MAX); //resetando o vetor de distancias
+  mDegree.assign(mNumberOfVertices, 1); //inicializando os graus dos vertices na mst
 
   mMinDist[rootVertex] = 0; //distancia do vertice raiz é conhecida
-  parent[rootVertex] = 0; //o pai da raiz é o vertice 0 por convenção
-
-  Vertex vertexZero (0, mMinDist[0]); //apenas para ajustar o tamanho do heap
-  heap.push(vertexZero); //posição 0 do heap é um vertice que não deve ser usado (não existe no grafo)
+  mParent[rootVertex] = 0; //o pai da raiz é o vertice 0 por convenção
 
   for(unsigned i = 1; i <= mNumberOfVertices; i++){ //inicializando o heap
     vertex.setIndex(i);
@@ -181,31 +179,22 @@ void Graph::prim(unsigned rootVertex){
   }
   while(!heap.empty()){
     minDistVertex = heap.pop(); //retira o vertice do topo do heap
-    unsigned explored = minDistVertex.getIndex(); //identifica o vertice com menor caminho conhecido
-    markingStatus[explored]=true; //marca o vertice como explorado
+    explored = minDistVertex.getIndex(); //identifica o vertice com menor caminho conhecido
+    markingStatus[explored]=true; //marca o vertice como explorado (foi adicionado a mst)
+    mDegree.at(mParent.at(explored))+=1;//quando o vertice for adicionado a mst, o grau do pai aumenta em 1
     getNeighbours(explored, &neighbours); //encontrando os vizinhos do vertice
     numberOfNeighbours = neighbours.size(); //salvando o grau do vertice
     for (unsigned i = 0; i < numberOfNeighbours; i++) { //para cada vizinho do vertice explorado
       neighbour = neighbours.at(i);//seleciona um vizinho
       tempEdge = make_pair(max(explored, neighbour), min(explored, neighbour)); //define a aresta
       if (mMinDist[explored] > mWeights[tempEdge] && markingStatus[neighbour] == false){
-          parent[neighbour] = explored;
+          mParent[neighbour] = explored;
           mMinDist[neighbour] = mWeights[tempEdge];
           heap.update(neighbour, mMinDist[neighbour]);
       }
     }
   }
-  myFile.open("resultados - parte 2/mst.txt");
-  myFile << mNumberOfVertices << "\n";
-  for (unsigned i = 1; i <= parent.size(); i++) {
-    if(parent[i] > 0){
-      myFile << i << " " << parent[i] << " " << mMinDist[i] << "\n";
-      totalWeight += mMinDist[i];
-    }
-  }
-  cout << endl;
-  myFile << totalWeight;
-  myFile.close();
+  return totalWeight;
 }
 /*Método que calcula a Excentricidade de um vertice*/
 float Graph::eccentricity(unsigned root){
@@ -248,14 +237,19 @@ void Graph::minPathBetweenResearchers(const char* person1, const char* person2){
  myNetMap.close(); //fecha o arquivo de mapeamento
  dijkstra(path[0]); //roda dijkstra para encontrar o caminho da pessoa 1 para a pessoa 2
  currentVertex = path[1]; //imprime o caminho a partir da pessoa 2, olhando o pai de cada vertice do caminho
- cout << currentVertex << endl;
+ cout << "Distancia entre " << person1 << " e "<< person2 << ": ";
+ cout << mMinDist.at(currentVertex) << endl;
+ cout << "Caminho minimo :" << endl;
+
  while (currentVertex != mParent.at(currentVertex)) { //a condição de parada é o vertice ser pai dele mesmo (raiz)
    spath.push_back(currentVertex); //salva o caminho
    currentVertex = mParent.at(currentVertex); //passa para o pai
  }
  for (unsigned i = spath.size()-1; i > 0; i--) { //imprime o caminho
-   cout << vertexName[spath[i]] << endl;
+   cout << vertexName[spath[i]] << ", ";
  }
+ cout << vertexName[spath[0]] << endl;
+ cout << endl;
 }
 /*Método que determina os vizinhos de Dijkstra e Ratton*/
 void Graph::printNeighbours(const char * pName) {
@@ -289,11 +283,12 @@ void Graph::printNeighbours(const char * pName) {
   numberOfNeighbours = neighbours.size(); //salva o grau do vertice
 
 	for (unsigned i=0; i < numberOfNeighbours; i++) {
-		cout << neighbours.at(i) << endl; //imprime os vizinhos do pesquisador no grafo
+		cout << vertexName.at(neighbours.at(i)) << endl; //imprime os vizinhos do pesquisador no grafo
 	}
 }
-/*Método que determina os três vértices de maior grau (pessoas e os graus)*/
+/*Método que determina os três vértices de maior grau (pessoas e os graus) na MST*/
 void Graph::greatestDegrees() {
+  prim(1);
 	unsigned newDegree, first=1, second=1, third=1;
 	bool empty=vertexName.empty();
   vector<unsigned> neighbours;

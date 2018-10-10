@@ -6,8 +6,8 @@
 * Implementação da classe lista de adjacências
 */
 
-#include <fstream>
-#include <string>
+#include <iostream> //para função print
+#include <fstream> //para leitura/escrita de arquivo
 #include "split.h"
 #include "lista.h"
 
@@ -94,11 +94,25 @@ void AdjacencyList::breadthFirstSearch (unsigned root){
 }
 /*Método que implementa a busca de menores caminhos em um grafo com peso*/
 float AdjacencyList::dijkstra (unsigned root){
-  Graph::dijkstra(root);
+  return Graph::dijkstra(root);
 }
 /*Método que implmenta um algoritmo gerador de mst's mínimas em um grafo com pesos*/
-void AdjacencyList::prim(unsigned root){
-  Graph::dijkstra(root);
+float AdjacencyList::prim(unsigned root){
+  float totalWeight = 0;
+  float peso = Graph::dijkstra(root);
+  ofstream myfile;
+
+  cout << "Criando arquivo da mst" << endl;
+  myfile.open("mst.txt");
+  myfile << getNumberOfVertices() << endl;
+  for (int i = 0; i < mParent.size(); i++) {
+    if(mParent[i] > 0){
+      myfile << i + 1 << " " << mParent[i] << " " << mMinDist[i] << endl;
+      totalWeight+=mMinDist.at(i);//com mais um vertice adicionado a mst, o peso dela aumenta com o custo do vertice
+    }
+  }
+  myfile.close();
+  return peso;
 }
 /*Imprime os vizinhos de um vertice*/
 void AdjacencyList::printNeighbours(const char *pName){

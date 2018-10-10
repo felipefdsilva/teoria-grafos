@@ -37,7 +37,7 @@ class Graph {
     virtual void breadthFirstSearch (unsigned); //realiza a busca em largura
     //virtual void depthFirstSearch (unsigned); //realiza a busca em profundidade
     virtual float dijkstra (unsigned); //determina caminhos mínimos em grafos com pesos
-    virtual void prim(unsigned); //determina uma mst de um grafo com pesos
+    virtual float prim(unsigned); //determina uma mst de um grafo com pesos
     float eccentricity(unsigned); //determina a excentricidade de um vertice
     void minPathBetweenResearchers(const char*, const char*); //determina o menor caminho entre pesquisadores
     virtual void printNeighbours(const char *); //imprime os vizinhos de um pesquisador no grafo
@@ -45,12 +45,13 @@ class Graph {
     void search(unsigned, unsigned=0);
     /*Método para testes*/
     virtual void print ();//imprime o grafo
+  protected:
+    vector <float> mMinDist; //usado por djkistra para determinar a distancia minima
+    vector <unsigned> mParent; //usado para determinar a arvore geradora
   private:
     unsigned mNumberOfVertices; //número de vértices do grafo
     unsigned mNumberOfEdges; //número de arestas do grafo
     map <pair<unsigned ,unsigned>, float> mWeights; //map com os pesos das arestas do grafo
-    vector <float> mMinDist; //usado por djkistra para determinar a distancia minima
-    vector <unsigned> mParent; //usado por djkistra para determinar a arvore geradora
     map <int, string>  vertexName;
     vector <unsigned> mDegree; //vetor com os graus do vertices
     bool mWeightedGraph;
