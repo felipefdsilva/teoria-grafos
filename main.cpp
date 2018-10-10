@@ -35,14 +35,14 @@ int main (int argc, char *argv[]){
   //pGraph->print()
 
   /*Estudo de Caso 1*/
-  /*
+
   cout << "Distancia e caminho minimo" << endl;
   pGraph->search(1, 10);
   pGraph->search(1, 20);
   pGraph->search(1, 30);
   pGraph->search(1, 40);
   pGraph->search(1, 50);
-  */
+  
   /*Estudo de Caso 2*/
   /*
   cout << "Excentricidades:" << endl;
@@ -70,9 +70,9 @@ int main (int argc, char *argv[]){
   /*Estudo de caso 4*/
   /*
   cout << "Obtendo a arvore geradora minima" << endl;
-  high_resolution_clock::time_point t1 = high_resolution_clock::now();
+  t1 = high_resolution_clock::now();
   cout << "Peso: " << pGraph->prim(1) << endl;
-  high_resolution_clock::time_point t2 = high_resolution_clock::now();
+  t2 = high_resolution_clock::now();
   duration = duration_cast<microseconds>(t2-t1).count();
   cout << "Tempo de Execucao: " << duration/1000000 << " s" << endl;
   */
@@ -86,17 +86,25 @@ int main (int argc, char *argv[]){
   cout << "Tempo de Execucao: " << duration/1000000 << " s" << endl;
   */
   /*Estudo de caso 6*/
+  /*
   cout << "Calculando caminho minimo entre pesquisadores" << endl;
  	pGraph->minPathBetweenResearchers("Edsger W. Dijkstra", "Alan M. Turing");
   pGraph->minPathBetweenResearchers("Edsger W. Dijkstra", "J. B. Kruskal");
   pGraph->minPathBetweenResearchers("Edsger W. Dijkstra", "Jon M. Kleinberg");
   pGraph->minPathBetweenResearchers("Edsger W. Dijkstra", "Éva Tardos");
   pGraph->minPathBetweenResearchers("Edsger W. Dijkstra", "Daniel R. Figueiredo");
-
+  */
   /*Estudo de caso 7*/
   /*
   cout << "Maiores graus na arvore geradora" << endl;
   pGraph->greatestDegrees();
+  */
+  /*Estudo de caso 8*/
+  /*
+  cout << "Vizinhos de Edsger W. Dijkstra:" << endl;
+  pGraph->printNeighbours("Edsger W. Dijkstra");
+  cout << "Vizinhos de Daniel R. Figueiredo:" << endl;
+  pGraph->printNeighbours("Daniel R. Figueiredo");
   */
   return 0;
 }

@@ -52,7 +52,7 @@ class Graph {
     unsigned mNumberOfVertices; //número de vértices do grafo
     unsigned mNumberOfEdges; //número de arestas do grafo
     map <pair<unsigned ,unsigned>, float> mWeights; //map com os pesos das arestas do grafo
-    map <int, string>  vertexName;
+    map <int, string>  mVertexName;
     vector <unsigned> mDegree; //vetor com os graus do vertices
     bool mWeightedGraph;
 };

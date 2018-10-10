@@ -98,21 +98,20 @@ float AdjacencyList::dijkstra (unsigned root){
 }
 /*Método que implmenta um algoritmo gerador de mst's mínimas em um grafo com pesos*/
 float AdjacencyList::prim(unsigned root){
-  float totalWeight = 0;
-  float peso = Graph::dijkstra(root);
+  float totalWeight = Graph::prim(root);
   ofstream myfile;
 
-  cout << "Criando arquivo da mst" << endl;
+  //cout << "Criando arquivo da mst" << endl;
   myfile.open("mst.txt");
   myfile << getNumberOfVertices() << endl;
-  for (int i = 0; i < mParent.size(); i++) {
+  for (unsigned i = 1; i < mParent.size(); i++) {
     if(mParent[i] > 0){
-      myfile << i + 1 << " " << mParent[i] << " " << mMinDist[i] << endl;
+      myfile << i << " " << mParent[i] << " " << mMinDist[i] << endl;
       totalWeight+=mMinDist.at(i);//com mais um vertice adicionado a mst, o peso dela aumenta com o custo do vertice
     }
   }
   myfile.close();
-  return peso;
+  return totalWeight;
 }
 /*Imprime os vizinhos de um vertice*/
 void AdjacencyList::printNeighbours(const char *pName){
